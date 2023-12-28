@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trendart/src/app.dart';
+import 'package:trendart/src/auth/Sign_in.dart';
 import 'package:trendart/src/mainpage.dart';
 import 'package:trendart/src/register.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -26,16 +27,15 @@ class _LoginWidgetState extends State<LoginWidget> {
   void dispose() {
     super.dispose();
   }
-  TextEditingController emailAddressController = TextEditingController();
-   FocusNode emailAddressFocusNode = FocusNode();
 
-   TextEditingController passwordController = TextEditingController();
-   FocusNode passwordFocusNode = FocusNode();
-   bool passwordVisibility = true;
+  TextEditingController emailAddressController = TextEditingController();
+  FocusNode emailAddressFocusNode = FocusNode();
+
+  TextEditingController passwordController = TextEditingController();
+  FocusNode passwordFocusNode = FocusNode();
+  bool passwordVisibility = true;
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Color(0xFFBBB8DA),
@@ -112,9 +112,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 obscureText: false,
                                 decoration: InputDecoration(
                                   labelText: 'Email Address',
-                                  labelStyle: Theme.of(context).textTheme.bodyText1,
+                                  labelStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   hintText: 'Enter your email here...',
-                                  hintStyle: Theme.of(context).textTheme.bodyText1,
+                                  hintStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
@@ -145,7 +147,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   filled: true,
                                   fillColor: Theme.of(context).backgroundColor,
-                                  contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  contentPadding:
+                                      EdgeInsetsDirectional.fromSTEB(
                                     16,
                                     24,
                                     0,
@@ -153,7 +156,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                 ),
                                 style: Theme.of(context).textTheme.headline6,
-                               
                               ),
                             ),
                           ],
@@ -172,9 +174,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 obscureText: !passwordVisibility,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  labelStyle: Theme.of(context).textTheme.bodyText1,
+                                  labelStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   hintText: 'Enter your password here...',
-                                  hintStyle: Theme.of(context).textTheme.bodyText1,
+                                  hintStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
@@ -205,7 +209,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   filled: true,
                                   fillColor: Theme.of(context).backgroundColor,
-                                  contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  contentPadding:
+                                      EdgeInsetsDirectional.fromSTEB(
                                     16,
                                     24,
                                     24,
@@ -213,7 +218,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   suffixIcon: InkWell(
                                     onTap: () => setState(
-                                      () => passwordVisibility = !passwordVisibility,
+                                      () => passwordVisibility =
+                                          !passwordVisibility,
                                     ),
                                     focusNode: FocusNode(skipTraversal: true),
                                     child: Icon(
@@ -226,7 +232,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                 ),
                                 style: Theme.of(context).textTheme.headline6,
-                                
                               ),
                             ),
                           ],
@@ -239,17 +244,25 @@ class _LoginWidgetState extends State<LoginWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => NavBarPage(
-            initialPage: '',
-            page: HomePageMAINWidget(),
-          )),
-      );
+                                  signIn(emailAddressController.text,
+                                          passwordController.text)
+                                      .then((value) {
+                                    //if (value !=null) {
+                                      print(value);
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => NavBarPage(
+                                                  initialPage: '',
+                                                  page: HomePageMAINWidget(),
+                                                )),
+                                      );
+                                   // }
+                                  });
                                 },
                                 child: Text('Login'),
                                 style: ElevatedButton.styleFrom(
@@ -280,11 +293,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                  Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const RegisterWidget()),
-      );
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterWidget()),
+                                );
                               },
                               child: Text('Create Account'),
                               style: ElevatedButton.styleFrom(

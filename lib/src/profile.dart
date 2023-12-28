@@ -3,8 +3,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:trendart/src/auth/Sign_out.dart';
 import 'package:trendart/src/editProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trendart/src/login.dart';
 
  
 
@@ -380,6 +382,12 @@ class _ProfileWidgetState extends State<ProfileWidget>
                 padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
                 child: ElevatedButton(
                   onPressed: () async {
+                    signOut().then((value) => Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginWidget(),
+                                                ),
+                                      ));
                    
                   },
                   style: ElevatedButton.styleFrom(

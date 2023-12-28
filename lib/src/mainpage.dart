@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trendart/src/detailsPage.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePageMAINWidget extends StatefulWidget {
   const HomePageMAINWidget({Key? key}) : super(key: key);
@@ -73,7 +73,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          'Hoşgeldin Kralbartu',
+                          'Hoşgeldin ',
                           style: TextStyle(
                             fontFamily: 'Urbanist',
                             color: Color(0xFFB5205A),
@@ -210,131 +210,147 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 children: [
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF97795F),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 4.0,
-                            color: Color(0x32000000),
-                            offset: Offset(0.0, 2.0),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: InkWell(
-                        splashColor: Colors.transparent,
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onTap: () async {
-                           Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const PropertyDetailsWidget()),
-      );
-                          
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Hero(
-                              tag: '',
-                              transitionOnUserGestures: true,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(0.0),
-                                  bottomRight: Radius.circular(0.0),
-                                  topLeft: Radius.circular(8.0),
-                                  topRight: Radius.circular(8.0),
-                                ),
-                                child: Image.asset(
-                                  'assets/images/mainscreenbackground.png',
-                                  width: double.infinity,
-                                  height: 190.0,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Home on Beachront',
-                                      style: TextStyle(
-                                        fontFamily: 'Urbanist',
-                                        color: Theme.of(context).canvasColor,
-                                        fontSize: 18.0,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.favorite_border,
-                                      color: Theme.of(context).errorColor,
-                                      size: 24.0,
-                                    ),
-                                    onPressed: () {
-                                      print('IconButton pressed ...');
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'BEETHOVEN',
-                                      style: TextStyle(
-                                        fontFamily: 'Urbanist',
-                                        color: Theme.of(context).canvasColor,
-                                        fontSize: 14.0,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: 40.0,
-                              decoration: BoxDecoration(),
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 24.0, 12.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '25 \$',
-                                      style: TextStyle(
-                                        fontFamily: 'Urbanist',
-                                        color: Theme.of(context).canvasColor,
-                                        fontSize: 25.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  Artwork(),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class Artwork extends StatefulWidget {
+  const Artwork({
+    super.key,
+  });
+
+  @override
+  State<Artwork> createState() => _ArtworkState();
+}
+
+class _ArtworkState extends State<Artwork> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 12.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Color(0xFF97795F),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 4.0,
+              color: Color(0x32000000),
+              offset: Offset(0.0, 2.0),
+            )
+          ],
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: InkWell(
+          splashColor: Colors.transparent,
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: () async {
+             Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const PropertyDetailsWidget()),
+          );
+            
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Hero(
+                tag: '',
+                transitionOnUserGestures: true,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(0.0),
+                    bottomRight: Radius.circular(0.0),
+                    topLeft: Radius.circular(8.0),
+                    topRight: Radius.circular(8.0),
+                  ),
+                  child: Image.asset(
+                    'assets/images/mainscreenbackground.png',
+                    width: double.infinity,
+                    height: 190.0,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Home on Beachront',
+                        style: TextStyle(
+                          fontFamily: 'Urbanist',
+                          color: Theme.of(context).canvasColor,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.favorite_border,
+                        color: Theme.of(context).errorColor,
+                        size: 24.0,
+                      ),
+                      onPressed: () {
+                        print('IconButton pressed ...');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'BEETHOVEN',
+                        style: TextStyle(
+                          fontFamily: 'Urbanist',
+                          color: Theme.of(context).canvasColor,
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 40.0,
+                decoration: BoxDecoration(),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 24.0, 12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        '25 \$',
+                        style: TextStyle(
+                          fontFamily: 'Urbanist',
+                          color: Theme.of(context).canvasColor,
+                          fontSize: 25.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

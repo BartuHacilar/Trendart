@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trendart/src/auth/Sign_in.dart';
+import 'package:trendart/src/auth/Sign_up.dart';
 import 'package:trendart/src/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 class RegisterWidget extends StatefulWidget {
   const RegisterWidget({Key? key}) : super(key: key);
@@ -12,36 +13,29 @@ class RegisterWidget extends StatefulWidget {
 }
 
 class _RegisterWidgetState extends State<RegisterWidget> {
-  
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
 
-  
-
     WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    
-
     super.dispose();
   }
-   TextEditingController emailAddressController = TextEditingController();
-   FocusNode emailAddressFocusNode = FocusNode();
 
-   TextEditingController passwordController = TextEditingController();
-   FocusNode passwordFocusNode = FocusNode();
-   bool passwordVisibility = true;
+  TextEditingController emailAddressController = TextEditingController();
+  FocusNode emailAddressFocusNode = FocusNode();
+
+  TextEditingController passwordController = TextEditingController();
+  FocusNode passwordFocusNode = FocusNode();
+  bool passwordVisibility = true;
 
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Color(0xFFBBB8DA),
@@ -118,9 +112,11 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 obscureText: false,
                                 decoration: InputDecoration(
                                   labelText: 'Email Address',
-                                  labelStyle: Theme.of(context).textTheme.bodyText1,
+                                  labelStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   hintText: 'Enter your email here...',
-                                  hintStyle: Theme.of(context).textTheme.bodyText1,
+                                  hintStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
@@ -151,7 +147,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                   filled: true,
                                   fillColor: Theme.of(context).backgroundColor,
-                                  contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  contentPadding:
+                                      EdgeInsetsDirectional.fromSTEB(
                                     16,
                                     24,
                                     0,
@@ -159,7 +156,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                 ),
                                 style: Theme.of(context).textTheme.headline6,
-                                
                               ),
                             ),
                           ],
@@ -178,9 +174,11 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 obscureText: !passwordVisibility,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
-                                  labelStyle: Theme.of(context).textTheme.bodyText1,
+                                  labelStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   hintText: 'Enter your password here...',
-                                  hintStyle: Theme.of(context).textTheme.bodyText1,
+                                  hintStyle:
+                                      Theme.of(context).textTheme.bodyText1,
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).primaryColor,
@@ -211,7 +209,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                   filled: true,
                                   fillColor: Theme.of(context).backgroundColor,
-                                  contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                  contentPadding:
+                                      EdgeInsetsDirectional.fromSTEB(
                                     16,
                                     24,
                                     24,
@@ -219,7 +218,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                   suffixIcon: InkWell(
                                     onTap: () => setState(
-                                      () => passwordVisibility = !passwordVisibility,
+                                      () => passwordVisibility =
+                                          !passwordVisibility,
                                     ),
                                     focusNode: FocusNode(skipTraversal: true),
                                     child: Icon(
@@ -232,7 +232,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   ),
                                 ),
                                 style: Theme.of(context).textTheme.headline6,
-                                
                               ),
                             ),
                           ],
@@ -245,13 +244,29 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  addData();
-                                    
-                                  
-                            
+                                  signUp(emailAddressController.text,
+                                          passwordController.text)
+                                      .then((value) {
+                                    if (value != null) {
+                                      DocumentReference documentReference =
+                                          FirebaseFirestore.instance
+                                              .collection('User')
+                                              .doc();
+
+                                      // Yeni belgeyi oluşturun
+                                      Map<String, dynamic> data = {
+                                        'email': value.user!.email,
+                                        'account_id': value.user!.uid,
+                                      };
+
+                                      // Belgeyi Firestore'a ekleyin
+                                      documentReference.set(data);
+                                    }
+                                  });
                                 },
                                 child: Text('Register'),
                                 style: ElevatedButton.styleFrom(
@@ -282,12 +297,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                
                                 Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const LoginWidget()),
-      );
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginWidget()),
+                                );
                               },
                               child: Text('Already Have an Account?'),
                               style: ElevatedButton.styleFrom(
@@ -319,15 +334,4 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       ),
     );
   }
-  void addData() {
-  FirebaseFirestore.instance.collection('User').add({
-    'username': emailAddressController.text,
-    'password': passwordController.text,
-  });
-  ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Kaydolma Başarılı"),
-          ),
-        );
-}
 }

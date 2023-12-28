@@ -123,8 +123,9 @@ class _NavBarPageState extends State<NavBarPage> {
   Widget build(BuildContext context) {
     final tabs = {
       'Home': HomePageMAINWidget(),
-      'Profile': ProfileWidget(),
+      
       'EditProfile': EditProfileWidget(),
+      'Profile': ProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
 
@@ -153,16 +154,16 @@ class _NavBarPageState extends State<NavBarPage> {
         haptic: false,
         tabs: [
           GButton(
-            icon: Icons.phone,
-            text: '',
+            icon: Icons.home,
+            text: 'Home',
           ),
           GButton(
-            icon: Icons.security_sharp,
-            text: '',
+            icon: Icons.favorite_outline,
+            text: 'Favourites',
             iconSize: 32.0,
           ),
           GButton(
-            icon: Icons.account_circle_outlined,
+            icon: Icons.person,
             text: 'Profile',
             iconSize: 24.0,
           )

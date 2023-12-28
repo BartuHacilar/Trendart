@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -54,9 +54,9 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
 
         return Scaffold(
           key: scaffoldKey,
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Color(0xFFCFBDA3),
           appBar: AppBar(
-            backgroundColor: Theme.of(context).backgroundColor,
+            backgroundColor: Color(0xFFC6B8AE),
             automaticallyImplyLeading: false,
             leading: InkWell(
               splashColor: Colors.transparent,
