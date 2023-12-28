@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendart/src/app.dart';
 import 'package:trendart/src/auth/Sign_in.dart';
 import 'package:trendart/src/mainpage.dart';
@@ -251,17 +253,25 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   signIn(emailAddressController.text,
                                           passwordController.text)
                                       .then((value) {
-                                    //if (value !=null) {
-                                      print(value);
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => NavBarPage(
-                                                  initialPage: '',
-                                                  page: HomePageMAINWidget(),
-                                                )),
-                                      );
-                                   // }
+                                    if (value != null) {
+                                      storeGorevliIDToStorage(
+                                              context, value.user!.uid)
+                                          .then((value) {
+                                        if (value != null) {
+                                          print(value);
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NavBarPage(
+                                                      initialPage: '',
+                                                      page:
+                                                          HomePageMAINWidget(),
+                                                    )),
+                                          );
+                                        }
+                                      });
+                                    }
                                   });
                                 },
                                 child: Text('Login'),
@@ -329,5 +339,29 @@ class _LoginWidgetState extends State<LoginWidget> {
         ),
       ),
     );
+  }
+
+  FlutterSecureStorage storage = FlutterSecureStorage();
+  Future<bool> storeGorevliIDToStorage(
+      BuildContext context, String gorevli_ID) async {
+    await storage.write(key: 'UserUid', value: gorevli_ID);
+    final gorevliID = await storage.read(key: "UserUid");
+    if (gorevliID == '') {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('UserUid', gorevli_ID);
+      String ShPrGorevliID = prefs.getString('UserUid')!;
+      if (ShPrGorevliID == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sistem Hatası Tekrar Deneyin"),
+          ),
+        );
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
   }
 }

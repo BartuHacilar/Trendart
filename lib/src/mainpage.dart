@@ -1,7 +1,16 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:trendart/src/detailsPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trendart/src/user.dart';
+
+import 'image.dart';
 
 class HomePageMAINWidget extends StatefulWidget {
   const HomePageMAINWidget({Key? key}) : super(key: key);
@@ -11,36 +20,122 @@ class HomePageMAINWidget extends StatefulWidget {
 }
 
 class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
-
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-
-
-    
+    getGorevliIDFromStorage(context).then((value) {
+      print('1');
+      print(value);
+                                if (value != '') {
+                                  RetrieveUser(value).then((value) {if(value!=null){
+                                    print('2');
+      print(value);
+                                    user=value;
+                                    readData();
+                                    
+                                  }});
+                                }
+                              });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-  
-
     super.dispose();
+   
+     
+    
+    
+
+
   }
+
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
+  List<imageClass> imageList = [];
+  UserClass? user ;
+
+  void readData() {
+    FirebaseFirestore.instance.collection('Image').get().then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        imageClass newImage = imageClass(
+            base64: document['Base64'],
+            author: document['author'],
+            name: document['name'],
+            price: document['price'],
+            id: document['id']);
+
+          if(user!.favourites.contains(document['id'])){
+            newImage.favourite=true;
+          }
+
+        setState(() {
+          imageList.add(newImage);
+        });
+        
+        print('3');
+      print(imageList);
+      });
+    });
+  }
+  Future<dynamic> RetrieveUser(String uid ) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+
+    // Firestore'da account_id değeri 3 olan belgeleri bul
+    QuerySnapshot querySnapshot =
+        await usersCollection.where('account_id', isEqualTo: uid).get();
+
+    // Her belgeyi gez ve veri eklemeyi gerçekleştir
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      // Belge ID'sini al
+      String documentId = documentSnapshot.id;
+
+      // Belge içeriğini al
+      Map<String, dynamic> existingData =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+          List<String> stringList = existingData['favourites'].cast<String>();
+
+      // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+      UserClass RetrievedUser = new UserClass(uid: uid, account_id: existingData['account_id'], favourites: stringList);
+      return RetrievedUser ;
+
+    }
+    return null ;
+    
+
+  }
+
+  FlutterSecureStorage storage = FlutterSecureStorage();
+  String UserUid = '';
+
+  Future<String> getGorevliIDFromStorage(BuildContext context) async {
+    UserUid = (await storage.read(key: "UserUid"))!;
+    if (UserUid == '') {
+      final prefs = await SharedPreferences.getInstance();
+      UserUid = prefs.getString('UserUid')!;
+      if (UserUid == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sistem Hatası Tekrar Deneyin"),
+          ),
+        );
+        return UserUid;
+      } else {
+        return UserUid;
+      }
+    } else {
+      return UserUid;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    
-
-    
-
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Color(0xFFCFBDA3),
@@ -67,7 +162,8 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -96,14 +192,20 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                               children: [
                                 Icon(
                                   Icons.wallet,
-                                  color: Theme.of(context).textTheme.bodyText1!.color,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
                                   size: 24.0,
                                 ),
                                 Text(
                                   '35 \$',
                                   style: TextStyle(
                                     fontFamily: 'Urbanist',
-                                    color: Theme.of(context).textTheme.bodyText1!.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color,
                                     fontSize: 20.0,
                                   ),
                                 ),
@@ -115,7 +217,8 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       height: 60.0,
@@ -129,7 +232,8 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(4.0, 0.0, 4.0, 0.0),
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  4.0, 0.0, 4.0, 0.0),
                               child: TextFormField(
                                 controller: textController,
                                 focusNode: textFieldFocusNode,
@@ -137,7 +241,10 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                                 decoration: InputDecoration(
                                   labelStyle: TextStyle(
                                     fontFamily: 'Urbanist',
-                                    color: Theme.of(context).textTheme.bodyText2!.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2!
+                                        .color,
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
@@ -170,18 +277,19 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                                 ),
                                 style: TextStyle(
                                   fontFamily: 'Urbanist',
-                                  color: Theme.of(context).textTheme.bodyText1!.color,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
                                 ),
-                               
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 8.0, 0.0),
                             child: ElevatedButton.icon(
-                              onPressed: () async {
-                                
-                              },
+                              onPressed: () async {},
                               icon: Icon(
                                 Icons.manage_search,
                                 size: 15.0,
@@ -209,9 +317,9 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                 primary: false,
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                children: [
-                  Artwork(),
-                ],
+                children: imageList
+                    .map((imageClass) => Artwork(image: imageClass))
+                    .toList(),
               ),
             ),
           ],
@@ -223,14 +331,30 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
 
 class Artwork extends StatefulWidget {
   const Artwork({
-    super.key,
+    this.image,
   });
+
+  final imageClass? image;
 
   @override
   State<Artwork> createState() => _ArtworkState();
 }
 
 class _ArtworkState extends State<Artwork> {
+  Widget buildImageFromBase64(String base64String) {
+    // Base64 kodunu çözme
+    Uint8List bytes = base64.decode(base64String);
+
+    // Uint8List'i Image widget'ında kullanma
+    return Image.memory(
+      bytes,
+      fit: BoxFit.contain,
+      width: MediaQuery.sizeOf(context).width*0.9,
+      height: MediaQuery.sizeOf(context).height *
+          0.26, // Resmi widget'ın boyutlarına sığdır
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -254,12 +378,11 @@ class _ArtworkState extends State<Artwork> {
           hoverColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onTap: () async {
-             Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const PropertyDetailsWidget()),
-          );
-            
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PropertyDetailsWidget()),
+            );
           },
           child: Column(
             mainAxisSize: MainAxisSize.max,
@@ -274,12 +397,7 @@ class _ArtworkState extends State<Artwork> {
                     topLeft: Radius.circular(8.0),
                     topRight: Radius.circular(8.0),
                   ),
-                  child: Image.asset(
-                    'assets/images/mainscreenbackground.png',
-                    width: double.infinity,
-                    height: 190.0,
-                    fit: BoxFit.contain,
-                  ),
+                  child: buildImageFromBase64(widget.image!.base64),
                 ),
               ),
               Padding(
@@ -288,8 +406,9 @@ class _ArtworkState extends State<Artwork> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: Text(
-                        'Home on Beachront',
+                      child: 
+                      Text(
+                        widget.image!.name,
                         style: TextStyle(
                           fontFamily: 'Urbanist',
                           color: Theme.of(context).canvasColor,
@@ -297,16 +416,43 @@ class _ArtworkState extends State<Artwork> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.favorite_border,
-                        color: Theme.of(context).errorColor,
-                        size: 24.0,
-                      ),
-                      onPressed: () {
-                        print('IconButton pressed ...');
-                      },
-                    ),
+                    (widget.image!.favourite == true)
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.favorite_border,
+                              color: Colors.red,
+                              size: 24.0,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                 getGorevliIDFromStorage(context).then((value) {
+                                if (value != '') {
+                                  RemoveFavourites(value , widget.image!.id);
+                                }
+                              });
+                              widget.image!.favourite = false;
+                              });
+                             
+                            },
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              Icons.favorite_border,
+                              color: Colors.grey,
+                              size: 24.0,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                getGorevliIDFromStorage(context).then((value) {
+                                if (value != '') {
+                                  AddFavourites(value, widget.image!.id);
+                                }
+                              });
+                              widget.image!.favourite = true;
+                              });
+                              
+                            },
+                          )
                   ],
                 ),
               ),
@@ -317,7 +463,7 @@ class _ArtworkState extends State<Artwork> {
                   children: [
                     Expanded(
                       child: Text(
-                        'BEETHOVEN',
+                       widget.image!= null ? widget.image!.author :'',
                         style: TextStyle(
                           fontFamily: 'Urbanist',
                           color: Theme.of(context).canvasColor,
@@ -332,13 +478,14 @@ class _ArtworkState extends State<Artwork> {
                 height: 40.0,
                 decoration: BoxDecoration(),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 24.0, 12.0),
+                  padding:
+                      EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 24.0, 12.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        '25 \$',
+                        '${widget.image!.price.toString()} \$',
                         style: TextStyle(
                           fontFamily: 'Urbanist',
                           color: Theme.of(context).canvasColor,
@@ -355,4 +502,81 @@ class _ArtworkState extends State<Artwork> {
       ),
     );
   }
+
+  FlutterSecureStorage storage = FlutterSecureStorage();
+  String UserUid = '';
+
+  Future<String> getGorevliIDFromStorage(BuildContext context) async {
+    UserUid = (await storage.read(key: "UserUid"))!;
+    if (UserUid == '') {
+      final prefs = await SharedPreferences.getInstance();
+      UserUid = prefs.getString('UserUid')!;
+      if (UserUid == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sistem Hatası Tekrar Deneyin"),
+          ),
+        );
+        return UserUid;
+      } else {
+        return UserUid;
+      }
+    } else {
+      return UserUid;
+    }
+  }
+
+  void AddFavourites(String uid , String imageID) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+
+    // Firestore'da account_id değeri 3 olan belgeleri bul
+    QuerySnapshot querySnapshot =
+        await usersCollection.where('account_id', isEqualTo: uid).get();
+
+    // Her belgeyi gez ve veri eklemeyi gerçekleştir
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      // Belge ID'sini al
+      String documentId = documentSnapshot.id;
+
+      // Belge içeriğini al
+      Map<String, dynamic> existingData =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+      existingData['favourites'].add(imageID);
+
+      // Belgeyi güncelle
+      await usersCollection.doc(documentId).set(existingData);
+
+      print('Veri eklendi/güncellendi: $documentId');
+    }
+  }
+  void RemoveFavourites(String uid , String imageID) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+
+    // Firestore'da account_id değeri 3 olan belgeleri bul
+    QuerySnapshot querySnapshot =
+        await usersCollection.where('account_id', isEqualTo: uid).get();
+
+    // Her belgeyi gez ve veri eklemeyi gerçekleştir
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      // Belge ID'sini al
+      String documentId = documentSnapshot.id;
+
+      // Belge içeriğini al
+      Map<String, dynamic> existingData =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+      existingData['favourites'].remove(imageID);
+
+      // Belgeyi güncelle
+      await usersCollection.doc(documentId).set(existingData);
+
+      print('Veri eklendi/güncellendi: $documentId');
+    }
+  }
+  
 }

@@ -261,6 +261,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                       Map<String, dynamic> data = {
                                         'email': value.user!.email,
                                         'account_id': value.user!.uid,
+                                        'favourites':[''],                                     
+                                        'name':'user',
+                                        
                                       };
 
                                       // Belgeyi Firestore'a ekleyin

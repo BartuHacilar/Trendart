@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendart/src/auth/Sign_out.dart';
 import 'package:trendart/src/editProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendart/src/login.dart';
+import 'package:trendart/src/user.dart';
 
  
 
@@ -26,6 +29,19 @@ class _ProfileWidgetState extends State<ProfileWidget>
   @override
   void initState() {
     super.initState();
+
+    getGorevliIDFromStorage(context).then((value) {
+      if(value!=''){
+        RetrieveUser(value).then((value) {
+          if(value!=null){
+            user=value;
+          }
+
+      });
+
+      }
+      
+    });
     
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
@@ -38,7 +54,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
     super.dispose();
   }
   final unfocusNode = FocusNode();
-
+  UserClass? user ;
   @override
   Widget build(BuildContext context) {
    
@@ -408,5 +424,55 @@ class _ProfileWidgetState extends State<ProfileWidget>
         ),
       ),
     );
+  }
+
+  Future<dynamic> RetrieveUser(String uid ) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+
+    // Firestore'da account_id değeri 3 olan belgeleri bul
+    QuerySnapshot querySnapshot =
+        await usersCollection.where('account_id', isEqualTo: uid).get();
+
+    // Her belgeyi gez ve veri eklemeyi gerçekleştir
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      // Belge ID'sini al
+      String documentId = documentSnapshot.id;
+
+      // Belge içeriğini al
+      Map<String, dynamic> existingData =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+      UserClass RetrievedUser = new UserClass(uid: uid, account_id: existingData['account_id'], favourites: existingData['favourites']);
+      return RetrievedUser ;
+
+    }
+    return null ;
+    
+
+  }
+
+   FlutterSecureStorage storage = FlutterSecureStorage();
+  String UserUid = '';
+
+  Future<String> getGorevliIDFromStorage(BuildContext context) async {
+    UserUid = (await storage.read(key: "UserUid"))!;
+    if (UserUid == '') {
+      final prefs = await SharedPreferences.getInstance();
+      UserUid = prefs.getString('UserUid')!;
+      if (UserUid == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sistem Hatası Tekrar Deneyin"),
+          ),
+        );
+        return UserUid;
+      } else {
+        return UserUid;
+      }
+    } else {
+      return UserUid;
+    }
   }
 }
