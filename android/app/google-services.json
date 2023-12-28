@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "920471631331",
+    "project_id": "trendart-63ec9",
+    "storage_bucket": "trendart-63ec9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920471631331:android:eab99c8b281a3aa480dcd6",
+        "android_client_info": {
+          "package_name": "com.example.trendart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ1oSBBgFPPKj7ktrpIfIHAsU5CvgcEcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

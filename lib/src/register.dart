@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:trendart/src/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class RegisterWidget extends StatefulWidget {
@@ -247,11 +248,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               padding: EdgeInsetsDirectional.fromSTEB(0, 0, 4, 0),
                               child: ElevatedButton(
                                 onPressed: () async {
-                                    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const LoginWidget()),
-      );
+                                  addData();
+                                    
                                   
                             
                                 },
@@ -321,4 +319,15 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       ),
     );
   }
+  void addData() {
+  FirebaseFirestore.instance.collection('User').add({
+    'username': emailAddressController.text,
+    'password': passwordController.text,
+  });
+  ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Kaydolma Başarılı"),
+          ),
+        );
+}
 }

@@ -12,6 +12,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  font_awesome_flutter: 10.6.0
+  google_nav_bar: 5.0.5
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.13.6
   flutter_localizations:
     sdk: flutter
 

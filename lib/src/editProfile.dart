@@ -1,82 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import 'edit_profile_model.dart';
-export 'edit_profile_model.dart';
+
+
+
 
 class EditProfileWidget extends StatefulWidget {
   const EditProfileWidget({
     Key? key,
-    this.userProfile,
+    
   }) : super(key: key);
 
-  final UsersRecord? userProfile;
+ 
 
   @override
   _EditProfileWidgetState createState() => _EditProfileWidgetState();
 }
 
 class _EditProfileWidgetState extends State<EditProfileWidget> {
-  late EditProfileModel _model;
+  
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => EditProfileModel());
+    
 
-    _model.textController1 ??= TextEditingController(text: widget.userProfile?.displayName);
-    _model.textFieldFocusNode ??= FocusNode();
-
-    _model.emailAddressController ??= TextEditingController(text: widget.userProfile?.email);
-    _model.emailAddressFocusNode ??= FocusNode();
-
-    _model.myBioController ??= TextEditingController(text: widget.userProfile?.bio);
-    _model.myBioFocusNode ??= FocusNode();
+  
 
     WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    _model.dispose();
+    
     super.dispose();
   }
-
+  FocusNode? textFieldFocusNode;
+  TextEditingController? textController1;
+  String? Function(BuildContext, String?)? textController1Validator;
+  // State field(s) for emailAddress widget.
+  FocusNode? emailAddressFocusNode;
+  TextEditingController? emailAddressController;
+  String? Function(BuildContext, String?)? emailAddressControllerValidator;
+  // State field(s) for myBio widget.
+  FocusNode? myBioFocusNode;
+  TextEditingController? myBioController;
+  String? Function(BuildContext, String?)? myBioControllerValidator;
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
+    
 
 
-    return StreamBuilder<UsersRecord>(
-      stream: UsersRecord.getDocument(currentUserReference!),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            body: Center(
-              child: SizedBox(
-                width: 50.0,
-                height: 50.0,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
-        final editProfileUsersRecord = snapshot.data!;
         return Scaffold(
           key: scaffoldKey,
           backgroundColor: Theme.of(context).backgroundColor,
@@ -139,21 +114,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            barrierColor: Color(0xB2090F13),
-                            context: context,
-                            builder: (context) {
-                              return Padding(
-                                padding: MediaQuery.of(context).viewInsets,
-                                child: Container(
-                                  height: 470.0,
-                                  child: ChangePhotoWidget(),
-                                ),
-                              );
-                            },
-                          ).then((value) => setState(() {}));
+                         
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Theme.of(context).dividerColor,
@@ -189,10 +150,11 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-                          child: Image.network(
-                            widget.userProfile!.photoUrl,
-                            fit: BoxFit.fitWidth,
-                          ),
+                          child: Image.asset(
+                                        'assets/images/mainscreenbackground.png',
+                                        
+                                        fit: BoxFit.contain,
+                                      ),
                         ),
                       ),
                     ),
@@ -206,21 +168,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            barrierColor: Color(0xB2090F13),
-                            context: context,
-                            builder: (context) {
-                              return Padding(
-                                padding: MediaQuery.of(context).viewInsets,
-                                child: Container(
-                                  height: 470.0,
-                                  child: ChangePhotoWidget(),
-                                ),
-                              );
-                            },
-                          ).then((value) => setState(() {}));
+                          
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Theme.of(context).dividerColor,
@@ -239,8 +187,8 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 16.0),
                   child: TextFormField(
-                    controller: _model.textController1,
-                    focusNode: _model.textFieldFocusNode,
+                    controller: textController1,
+                    focusNode: textFieldFocusNode,
                     obscureText: false,
                     decoration: InputDecoration(
                       labelText: 'Full Name',
@@ -280,14 +228,14 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       contentPadding: EdgeInsetsDirectional.fromSTEB(20.0, 24.0, 0.0, 24.0),
                     ),
                     style: Theme.of(context).textTheme.subtitle1,
-                    validator: _model.textController1Validator.asValidator(context),
+                    
                   ),
                 ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 12.0),
                   child: TextFormField(
-                    controller: _model.emailAddressController,
-                    focusNode: _model.emailAddressFocusNode,
+                    controller: emailAddressController,
+                    focusNode: emailAddressFocusNode,
                     obscureText: false,
                     decoration: InputDecoration(
                       labelText: 'Email Address',
@@ -327,14 +275,14 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                       contentPadding: EdgeInsetsDirectional.fromSTEB(20.0, 24.0, 0.0, 24.0),
                     ),
                     style: Theme.of(context).textTheme.subtitle1,
-                    validator: _model.emailAddressControllerValidator.asValidator(context),
+                   
                   ),
                 ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 12.0),
                   child: TextFormField(
-                    controller: _model.myBioController,
-                    focusNode: _model.myBioFocusNode,
+                    controller: myBioController,
+                    focusNode: myBioFocusNode,
                     obscureText: false,
                     decoration: InputDecoration(
                       labelText: 'Bio',
@@ -376,7 +324,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     style: Theme.of(context).textTheme.subtitle1,
                     textAlign: TextAlign.start,
                     maxLines: 3,
-                    validator: _model.myBioControllerValidator.asValidator(context),
+                   
                   ),
                 ),
                 Align(
@@ -385,13 +333,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                     child: ElevatedButton(
                       onPressed: () async {
-                        await editProfileUsersRecord.reference
-                            .update(createUsersRecordData(
-                          displayName: _model.textController1.text,
-                          email: _model.emailAddressController.text,
-                          bio: _model.myBioController.text,
-                        ));
-                        Navigator.of(context).pop();
+                        
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Theme.of(context).primaryColor,
@@ -416,7 +358,5 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             ),
           ),
         );
-      },
-    );
   }
 }

@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
-import 'property_details_model.dart';
-export 'property_details_model.dart';
+
+
 
 class PropertyDetailsWidget extends StatefulWidget {
   const PropertyDetailsWidget({
     Key? key,
-    this.propertyRef,
+    
   }) : super(key: key);
 
-  final PropertiesRecord? propertyRef;
+  
 
   @override
   _PropertyDetailsWidgetState createState() => _PropertyDetailsWidgetState();
@@ -21,67 +17,31 @@ class PropertyDetailsWidget extends StatefulWidget {
 
 class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
     with TickerProviderStateMixin {
-  late PropertyDetailsModel _model;
+ 
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final animationsMap = {
-    'textOnPageLoadAnimation1': AnimationInfo(
-      trigger: AnimationTrigger.onPageLoad,
-      effects: [
-        FadeEffect(
-          curve: Curves.easeInOut,
-          delay: 0.ms,
-          duration: 600.ms,
-          begin: 0.0,
-          end: 1.0,
-        ),
-        MoveEffect(
-          curve: Curves.easeInOut,
-          delay: 0.ms,
-          duration: 600.ms,
-          begin: Offset(0.0, 50.0),
-          end: Offset(0.0, 0.0),
-        ),
-      ],
-    ),
-    // ... (other animations)
-  };
+  
+  
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => PropertyDetailsModel());
-
-    setupAnimations(
-      animationsMap.values.where((anim) =>
-      anim.trigger == AnimationTrigger.onActionTrigger ||
-          !anim.applyInitialState),
-      this,
-    );
+    
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    _model.dispose();
-
+   
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isiOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
+    
 
-
+    
 
     return Scaffold(
       key: scaffoldKey,
@@ -94,52 +54,227 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  // ... (rest of the code)
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                      size: 24.0,
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 44.0, 0.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 320.0,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFDBE2E7),
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(0.0, 0.0),
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    
+                                  },
+                                  child: Hero(
+                                    tag: 'mainImage',
+                                    transitionOnUserGestures: true,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: Image.asset(
+                                        'assets/images/mainscreenbackground.png',
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Card(
+                                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                                            color: Color(0x3A000000),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.arrow_back_rounded,
+                                                color: Colors.white,
+                                                size: 24.0,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                    },
                   ),
-                  // ... (rest of the code)
-                  ElevatedButton(
-                    onPressed: () {
-                      print('ElevatedButton pressed ...');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFADB5BB),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Nice Painting',
+                            style: TextStyle(
+                              fontFamily: 'Urbanist',
+                              color: Theme.of(context).textTheme.bodyText1!.color,
+                              fontSize: 24.0,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.favorite_border,
+                            color: Theme.of(context).errorColor,
+                            size: 24.0,
+                          ),
+                          onPressed: () {
+                            print('IconButton pressed ...');
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Beethoven',
+                            style: TextStyle(
+                              fontFamily: 'Lexend Deca',
+                              color: Theme.of(context).textTheme.bodyText1!.color,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          'DESCRIPTION',
+                          style: TextStyle(
+                            fontFamily: 'Lexend Deca',
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+                            child: Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.',
+                              style: TextStyle(
+                                fontFamily: 'Lexend Deca',
+                                color: Theme.of(context).textTheme.bodyText2!.color,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFFEE7D4),
+                          Color.fromRGBO(255, 140, 0, 1)
+                        ],
+                        stops: [0.0, 1.0],
+                        begin: AlignmentDirectional(0.0, -1.0),
+                        end: AlignmentDirectional(0, 1.0),
                       ),
+                      borderRadius: BorderRadius.circular(12.0),
+                      shape: BoxShape.rectangle,
                     ),
-                    child: Icon(
-                      Icons.favorite_border,
-                      color: Theme.of(context).error,
-                      size: 24.0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          '1225 \$',
+                          style: TextStyle(
+                            fontFamily: 'Urbanist',
+                            color: Theme.of(context).textTheme.bodyText1!.color,
+                            fontSize: 30.0,
+                          ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              'Buy Now ',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Theme.of(context).textTheme.bodyText1!.color,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Icon(
+                              Icons.shopping_cart,
+                              color: Theme.of(context).textTheme.bodyText1!.color,
+                              size: 24.0,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  // ... (rest of the code)
-                  ElevatedButton(
-                    onPressed: () {
-                      print('ElevatedButton pressed ...');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFADB5BB),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.favorite_border,
-                      color: Theme.of(context).error,
-                      size: 24.0,
-                    ),
-                  ),
-                  // ... (rest of the code)
                 ],
               ),
             ),

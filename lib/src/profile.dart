@@ -1,14 +1,12 @@
-import '/auth/firebase_auth/auth_util.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'profile_model.dart';
-export 'profile_model.dart';
+import 'package:trendart/src/editProfile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+ 
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({Key? key}) : super(key: key);
@@ -19,71 +17,35 @@ class ProfileWidget extends StatefulWidget {
 
 class _ProfileWidgetState extends State<ProfileWidget>
     with TickerProviderStateMixin {
-  late ProfileModel _model;
+  
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final animationsMap = {
-    'buttonOnPageLoadAnimation': AnimationInfo(
-      trigger: AnimationTrigger.onPageLoad,
-      effects: [
-        VisibilityEffect(duration: Duration(milliseconds: 400)),
-        FadeEffect(
-          curve: Curves.easeInOut,
-          delay: Duration(milliseconds: 400),
-          duration: Duration(milliseconds: 600),
-          begin: 0.0,
-          end: 1.0,
-        ),
-        MoveEffect(
-          curve: Curves.easeInOut,
-          delay: Duration(milliseconds: 400),
-          duration: Duration(milliseconds: 600),
-          begin: Offset(0.0, 60.0),
-          end: Offset(0.0, 0.0),
-        ),
-      ],
-    ),
-  };
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => ProfileModel());
-
-    setupAnimations(
-      animationsMap.values.where((anim) =>
-      anim.trigger == AnimationTrigger.onActionTrigger ||
-          !anim.applyInitialState),
-      this,
-    );
+    
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    _model.dispose();
+    
 
     super.dispose();
   }
+  final unfocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
-          systemStatusBarContrastEnforced: true,
-        ),
-      );
-    }
+   
 
-    context.watch<FFAppState>();
+   
 
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
+      onTap: () => unfocusNode.canRequestFocus
+          ? FocusScope.of(context).requestFocus(unfocusNode)
           : FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
@@ -92,31 +54,348 @@ class _ProfileWidgetState extends State<ProfileWidget>
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ... (rest of the code)
-            ElevatedButton(
-              onPressed: () async {
-                GoRouter.of(context).prepareAuthEvent();
-                await authManager.signOut();
-                GoRouter.of(context).clearRedirectLocation();
-
-                context.goNamedAuth('login', context.mounted);
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(38.0),
+            Container(
+              height: 200.0,
+              child: Stack(
+                children: [
+                  Container(
+  width: double.infinity,
+  height: 140.0,
+  decoration: BoxDecoration(
+    color: Theme.of(context).secondaryHeaderColor,
+    image: DecorationImage(
+      fit: BoxFit.contain,
+      image: AssetImage('assets/images/Trendart_transparent_transparent.png'),
+    ),
+  ),
+)
+,
+                  Align(
+                    alignment: AlignmentDirectional(-1.0, 1.0),
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 16.0),
+                      child: Container(
+                        width: 90.0,
+                        height: 90.0,
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(76, 175, 80, 1),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).secondaryHeaderColor,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50.0),
+                            child: Image.asset(
+                                'assets/images/Trendart_transparent_transparent.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.contain,
+                              ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: AlignmentDirectional(1.0, 1.0),
+                    child: Container(
+                      width: 140.0,
+                      height: 65.0,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF78B17B),
+                        borderRadius: BorderRadius.circular(14.0),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(
+                            Icons.wallet,
+                            color: Theme.of(context).primaryColorDark,
+                            size: 24.0,
+                          ),
+                          Text(
+                            '35 \$',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                  fontFamily: 'Urbanist',
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontSize: 20.0,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+                  child: Text(
+                    'Andrew D.',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
                 ),
-                side: BorderSide(
-                  color: Theme.of(context).accentColor,
-                  width: 2.0,
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+                  child: Text(
+                    'Description',
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                          fontFamily: 'Poppins',
+                          fontSize: 20.0,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+              child: Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 3.0,
+                      color: Color(0x33000000),
+                      offset: Offset(0.0, 1.0),
+                    )
+                  ],
+                  borderRadius: BorderRadius.circular(8.0),
+                  shape: BoxShape.rectangle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        color: Color.fromRGBO(117, 117, 117, 1),
+                        size: 24.0,
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+                        child: Text(
+                          'Edit Profile',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional(0.9, 0.0),
+                          child: IconButton(
+  onPressed: () {
+   Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const EditProfileWidget()),
+      );
+  },
+  icon: Icon(
+    Icons.arrow_forward_ios,
+    color: Color.fromRGBO(117, 117, 117, 1),
+    size: 18.0,
+  ),
+)
+,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: Text(
-                'Log Out',
-                style: Theme.of(context).textTheme.bodyText1,
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+              child: Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 3.0,
+                      color: Color(0x33000000),
+                      offset: Offset(0.0, 1.0),
+                    )
+                  ],
+                  borderRadius: BorderRadius.circular(8.0),
+                  shape: BoxShape.rectangle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.moneyCheckAlt,
+                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        size: 24.0,
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+                        child: Text(
+                          'Deposit Money',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional(0.9, 0.0),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            size: 18.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ).animateOnPageLoad(
-                animationsMap['buttonOnPageLoadAnimation']!),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+              child: Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 3.0,
+                      color: Color(0x33000000),
+                      offset: Offset(0.0, 1.0),
+                    )
+                  ],
+                  borderRadius: BorderRadius.circular(8.0),
+                  shape: BoxShape.rectangle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.favorite_sharp,
+                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        size: 24.0,
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+                        child: Text(
+                          'My Favourites',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional(0.9, 0.0),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            size: 18.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+              child: Container(
+                width: double.infinity,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 3.0,
+                      color: Color(0x33000000),
+                      offset: Offset(0.0, 1.0),
+                    )
+                  ],
+                  borderRadius: BorderRadius.circular(8.0),
+                  shape: BoxShape.rectangle,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        Icons.photo_sharp,
+                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        size: 24.0,
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 0.0, 0.0),
+                        child: Text(
+                          'My Assets',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional(0.9, 0.0),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            size: 18.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: AlignmentDirectional(0.0, 0.0),
+              child: Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                   
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).primaryColor,
+                    padding: EdgeInsets.all(12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(38.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Log Out',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

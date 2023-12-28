@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trendart/src/app.dart';
 import 'package:trendart/src/mainpage.dart';
 import 'package:trendart/src/register.dart';
 
@@ -244,7 +245,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => const HomePageMAINWidget()),
+            builder: (context) => NavBarPage(
+            initialPage: '',
+            page: HomePageMAINWidget(),
+          )),
       );
                                 },
                                 child: Text('Login'),

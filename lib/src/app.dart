@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:trendart/src/editProfile.dart';
 import 'package:trendart/src/login.dart';
 import 'package:trendart/src/mainpage.dart';
+import 'package:trendart/src/profile.dart';
 import 'package:trendart/src/register.dart';
 
 import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -91,6 +94,80 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+class NavBarPage extends StatefulWidget {
+  NavBarPage({Key? key, this.initialPage, this.page}) : super(key: key);
+
+  final String? initialPage;
+  final Widget? page;
+
+  @override
+  _NavBarPageState createState() => _NavBarPageState();
+}
+
+/// This is the private State class that goes with NavBarPage.
+class _NavBarPageState extends State<NavBarPage> {
+  String _currentPageName = 'Home';
+  late Widget? _currentPage;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPageName = widget.initialPage ?? _currentPageName;
+    _currentPage = widget.page;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = {
+      'Home': HomePageMAINWidget(),
+      'Profile': ProfileWidget(),
+      'EditProfile': EditProfileWidget(),
+    };
+    final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
+
+    return Scaffold(
+      body: _currentPage ?? tabs[_currentPageName],
+      bottomNavigationBar: GNav(
+        selectedIndex: currentIndex,
+        onTabChange: (i) => setState(() {
+          _currentPage = null;
+          _currentPageName = tabs.keys.toList()[i];
+        }),
+        backgroundColor: Color(0xFF182026),
+        color: Colors.blueGrey,
+        activeColor: Colors.lightBlue,
+        tabBackgroundColor: Color(0xFF093631),
+        tabActiveBorder: Border.all(
+          color: Color(0xFF106B60),
+          width: 1.0,
+        ),
+        tabBorderRadius: 20.0,
+        tabMargin: EdgeInsetsDirectional.fromSTEB(0.0, 5.0, 0.0, 5.0),
+        padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+        gap: 0.0,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        duration: Duration(milliseconds: 500),
+        haptic: false,
+        tabs: [
+          GButton(
+            icon: Icons.phone,
+            text: '',
+          ),
+          GButton(
+            icon: Icons.security_sharp,
+            text: '',
+            iconSize: 32.0,
+          ),
+          GButton(
+            icon: Icons.account_circle_outlined,
+            text: 'Profile',
+            iconSize: 24.0,
+          )
+        ],
+      ),
     );
   }
 }
