@@ -12,14 +12,14 @@ import 'package:trendart/src/user.dart';
 
 import 'image.dart';
 
-class HomePageMAINWidget extends StatefulWidget {
-  const HomePageMAINWidget({Key? key}) : super(key: key);
+class FavouriteWidget extends StatefulWidget {
+  const FavouriteWidget({Key? key}) : super(key: key);
 
   @override
-  _HomePageMAINWidgetState createState() => _HomePageMAINWidgetState();
+  _FavouriteWidgetState createState() => _FavouriteWidgetState();
 }
 
-class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
+class _FavouriteWidgetState extends State<FavouriteWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -71,11 +71,12 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
 
           if(user!.favourites.contains(document['id'])){
             newImage.favourite=true;
-          }
-
-        setState(() {
+            setState(() {
           imageList.add(newImage);
         });
+          }
+
+        
         
         print('3');
       print(imageList);
@@ -202,7 +203,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                                   size: 24.0,
                                 ),
                                 Text(
-                                  '${user!.wallet.toString()}\$',
+                                  '35 \$',
                                   style: TextStyle(
                                     fontFamily: 'Urbanist',
                                     color: Theme.of(context)

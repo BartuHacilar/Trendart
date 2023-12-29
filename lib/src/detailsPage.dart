@@ -1,15 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendart/src/app.dart';
+import 'package:trendart/src/image.dart';
 import 'package:trendart/src/mainpage.dart';
 
 
 class PropertyDetailsWidget extends StatefulWidget {
-  const PropertyDetailsWidget({
+  const PropertyDetailsWidget( {
+   this.image,
     Key? key,
     
   }) : super(key: key);
+  final imageClass? image;
 
   
 
@@ -86,12 +91,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                                     transitionOnUserGestures: true,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
-                                      child: Image.asset(
-                                        'assets/images/mainscreenbackground.png',
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      child: buildImageFromBase64(widget.image!.base64),
                                     ),
                                   ),
                                 ),
@@ -149,7 +149,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       children: [
                         Expanded(
                           child: Text(
-                            'Nice Painting',
+                            widget.image!.name ,
                             style: TextStyle(
                               fontFamily: 'Urbanist',
                               color: Theme.of(context).textTheme.bodyText1!.color,
@@ -177,7 +177,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       children: [
                         Expanded(
                           child: Text(
-                            'Beethoven',
+                            widget.image!.author,
                             style: TextStyle(
                               fontFamily: 'Lexend Deca',
                               color: Theme.of(context).textTheme.bodyText1!.color,
@@ -235,7 +235,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       gradient: LinearGradient(
                         colors: [
                           Color(0xFFFEE7D4),
-                          Color.fromRGBO(255, 140, 0, 1)
+                          Color.fromRGBO(173, 120, 55, 1)
                         ],
                         stops: [0.0, 1.0],
                         begin: AlignmentDirectional(0.0, -1.0),
@@ -249,7 +249,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          '1225 \$',
+                          '${widget.image!.price.toString()} \$',
                           style: TextStyle(
                             fontFamily: 'Urbanist',
                             color: Theme.of(context).textTheme.bodyText1!.color,
@@ -283,6 +283,19 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
           ),
         ],
       ),
+    );
+  }
+  Widget buildImageFromBase64(String base64String) {
+    // Base64 kodunu çözme
+    Uint8List bytes = base64.decode(base64String);
+
+    // Uint8List'i Image widget'ında kullanma
+    return Image.memory(
+      bytes,
+      fit: BoxFit.cover,
+      width: MediaQuery.sizeOf(context).width*1,
+      height: MediaQuery.sizeOf(context).height *
+          1, // Resmi widget'ın boyutlarına sığdır
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +13,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trendart/src/login.dart';
 import 'package:trendart/src/user.dart';
 
- 
-
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({Key? key}) : super(key: key);
 
@@ -22,8 +22,6 @@ class ProfileWidget extends StatefulWidget {
 
 class _ProfileWidgetState extends State<ProfileWidget>
     with TickerProviderStateMixin {
-  
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -31,36 +29,44 @@ class _ProfileWidgetState extends State<ProfileWidget>
     super.initState();
 
     getGorevliIDFromStorage(context).then((value) {
-      if(value!=''){
+      if (value != '') {
         RetrieveUser(value).then((value) {
-          if(value!=null){
-            user=value;
+          if (value != null) {
+            setState(() {
+              user = value;
+            });
           }
-
-      });
-
+        });
       }
-      
     });
-    
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 
   @override
   void dispose() {
-    
-
     super.dispose();
   }
+
   final unfocusNode = FocusNode();
-  UserClass? user ;
+  UserClass? user;
+
+  Widget buildImageFromBase64(String base64String) {
+    // Base64 kodunu çözme
+    Uint8List bytes = base64.decode(base64String);
+
+    // Uint8List'i Image widget'ında kullanma
+    return Image.memory(
+      bytes,
+      fit: BoxFit.contain,
+      width: MediaQuery.sizeOf(context).width * 0.9,
+      height: MediaQuery.sizeOf(context).height *
+          0.26, // Resmi widget'ın boyutlarına sığdır
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-   
-
-   
-
     return GestureDetector(
       onTap: () => unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(unfocusNode)
@@ -77,17 +83,17 @@ class _ProfileWidgetState extends State<ProfileWidget>
               child: Stack(
                 children: [
                   Container(
-  width: double.infinity,
-  height: 140.0,
-  decoration: BoxDecoration(
-    color: Theme.of(context).secondaryHeaderColor,
-    image: DecorationImage(
-      fit: BoxFit.contain,
-      image: AssetImage('assets/images/Trendart_transparent_transparent.png'),
-    ),
-  ),
-)
-,
+                    width: double.infinity,
+                    height: 140.0,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).secondaryHeaderColor,
+                      image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage(
+                            'assets/images/Trendart_transparent_transparent.png'),
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: AlignmentDirectional(-1.0, 1.0),
                     child: Padding(
@@ -108,12 +114,14 @@ class _ProfileWidgetState extends State<ProfileWidget>
                           padding: EdgeInsets.all(4.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(50.0),
-                            child: Image.asset(
-                                'assets/images/Trendart_transparent_transparent.png',
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.contain,
-                              ),
+                            child: user!.profile_edited == false
+                                ? Image.asset(
+                                    'assets/images/Trendart_transparent_transparent.png',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.contain,
+                                  )
+                                : buildImageFromBase64(user!.avatar_image),
                           ),
                         ),
                       ),
@@ -138,15 +146,13 @@ class _ProfileWidgetState extends State<ProfileWidget>
                             size: 24.0,
                           ),
                           Text(
-                            '35 \$',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(
-                                  fontFamily: 'Urbanist',
-                                  color: Theme.of(context).primaryColorDark,
-                                  fontSize: 20.0,
-                                ),
+                            '${user!.wallet.toString()} \$',
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontFamily: 'Urbanist',
+                                      color: Theme.of(context).primaryColorDark,
+                                      fontSize: 20.0,
+                                    ),
                           ),
                         ],
                       ),
@@ -161,23 +167,8 @@ class _ProfileWidgetState extends State<ProfileWidget>
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
                   child: Text(
-                    'Andrew D.',
+                    user!.profile_edited == false ? 'User' : user!.name,
                     style: Theme.of(context).textTheme.headline4,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
-                  child: Text(
-                    'Description',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
-                          fontFamily: 'Poppins',
-                          fontSize: 20.0,
-                        ),
                   ),
                 ),
               ],
@@ -221,20 +212,20 @@ class _ProfileWidgetState extends State<ProfileWidget>
                         child: Align(
                           alignment: AlignmentDirectional(0.9, 0.0),
                           child: IconButton(
-  onPressed: () {
-   Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const EditProfileWidget()),
-      );
-  },
-  icon: Icon(
-    Icons.arrow_forward_ios,
-    color: Color.fromRGBO(117, 117, 117, 1),
-    size: 18.0,
-  ),
-)
-,
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EditProfileWidget()),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color.fromRGBO(117, 117, 117, 1),
+                              size: 18.0,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -266,7 +257,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                     children: [
                       FaIcon(
                         FontAwesomeIcons.moneyCheckAlt,
-                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        color: Color.fromRGBO(117, 117, 117, 1),
                         size: 24.0,
                       ),
                       Padding(
@@ -282,7 +273,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                           alignment: AlignmentDirectional(0.9, 0.0),
                           child: Icon(
                             Icons.arrow_forward_ios,
-                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            color: Color.fromRGBO(117, 117, 117, 1),
                             size: 18.0,
                           ),
                         ),
@@ -316,7 +307,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                     children: [
                       Icon(
                         Icons.favorite_sharp,
-                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        color: Color.fromRGBO(117, 117, 117, 1),
                         size: 24.0,
                       ),
                       Padding(
@@ -332,7 +323,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                           alignment: AlignmentDirectional(0.9, 0.0),
                           child: Icon(
                             Icons.arrow_forward_ios,
-                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            color: Color.fromRGBO(117, 117, 117, 1),
                             size: 18.0,
                           ),
                         ),
@@ -366,7 +357,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                     children: [
                       Icon(
                         Icons.photo_sharp,
-                        color:  Color.fromRGBO(117, 117, 117, 1),
+                        color: Color.fromRGBO(117, 117, 117, 1),
                         size: 24.0,
                       ),
                       Padding(
@@ -382,7 +373,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                           alignment: AlignmentDirectional(0.9, 0.0),
                           child: Icon(
                             Icons.arrow_forward_ios,
-                            color:  Color.fromRGBO(117, 117, 117, 1),
+                            color: Color.fromRGBO(117, 117, 117, 1),
                             size: 18.0,
                           ),
                         ),
@@ -399,12 +390,11 @@ class _ProfileWidgetState extends State<ProfileWidget>
                 child: ElevatedButton(
                   onPressed: () async {
                     signOut().then((value) => Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => LoginWidget(),
-                                                ),
-                                      ));
-                   
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginWidget(),
+                          ),
+                        ));
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Theme.of(context).primaryColor,
@@ -426,7 +416,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
     );
   }
 
-  Future<dynamic> RetrieveUser(String uid ) async {
+  Future<dynamic> RetrieveUser(String uid) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -443,17 +433,26 @@ class _ProfileWidgetState extends State<ProfileWidget>
       Map<String, dynamic> existingData =
           documentSnapshot.data() as Map<String, dynamic>;
 
+      List<String> stringFavourites = existingData['favourites'].cast<String>();
+      List<String> stringInventory = existingData['inventory'].cast<String>();
+
       // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-      UserClass RetrievedUser = new UserClass(uid: uid, account_id: existingData['account_id'], favourites: existingData['favourites']);
-      return RetrievedUser ;
-
+      UserClass RetrievedUser = new UserClass(
+          uid: uid,
+          account_id: existingData['account_id'],
+          favourites: stringFavourites,
+          name: existingData['name'],
+          profile_edited: existingData['profile_edited'],
+          background_image: existingData['background_image'],
+          avatar_image: existingData['avatar_image'],
+          inventory: stringInventory,
+          wallet: existingData['wallet']);
+      return RetrievedUser;
     }
-    return null ;
-    
-
+    return null;
   }
 
-   FlutterSecureStorage storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = FlutterSecureStorage();
   String UserUid = '';
 
   Future<String> getGorevliIDFromStorage(BuildContext context) async {

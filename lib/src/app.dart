@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:trendart/src/editProfile.dart';
+import 'package:trendart/src/favourites.dart';
 import 'package:trendart/src/login.dart';
 import 'package:trendart/src/mainpage.dart';
 import 'package:trendart/src/profile.dart';
@@ -124,7 +125,7 @@ class _NavBarPageState extends State<NavBarPage> {
     final tabs = {
       'Home': HomePageMAINWidget(),
       
-      'EditProfile': EditProfileWidget(),
+      'Favourites': FavouriteWidget(),
       'Profile': ProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);

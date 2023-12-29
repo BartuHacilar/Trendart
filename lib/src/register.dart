@@ -263,7 +263,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                         'account_id': value.user!.uid,
                                         'favourites':[''],                                     
                                         'name':'user',
+                                        'wallet':50,
+                                        'profile_edited':false,
+                                        'background_image':'',
+                                        'avatar_image':'',
+                                        'inventory':['']
                                         
+
+
                                       };
 
                                       // Belgeyi Firestore'a ekleyin
