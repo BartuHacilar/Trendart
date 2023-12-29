@@ -67,6 +67,7 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
             author: document['author'],
             name: document['name'],
             price: document['price'],
+            description: document['description'],
             id: document['id']);
 
           if(user!.favourites.contains(document['id'])){
@@ -173,7 +174,7 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          'Hoşgeldin ',
+                          'Hoşgeldiniz ',
                           style: TextStyle(
                             fontFamily: 'Urbanist',
                             color: Color(0xFFB5205A),

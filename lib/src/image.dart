@@ -6,6 +6,7 @@ class imageClass  {
   int price;
   String id ;
   bool? favourite = false;
+  String description ;
  
 
   
@@ -16,7 +17,8 @@ class imageClass  {
     required this.name,
     required this.price,
     required this.id,
-     this.favourite
+     this.favourite,
+     required this.description
    
   }); 
 }
