@@ -28,16 +28,17 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
     getGorevliIDFromStorage(context).then((value) {
       print('1');
       print(value);
-                                if (value != '') {
-                                  RetrieveUser(value).then((value) {if(value!=null){
-                                    print('2');
-      print(value);
-                                    user=value;
-                                    readData();
-                                    
-                                  }});
-                                }
-                              });
+      if (value != '') {
+        RetrieveUser(value).then((value) {
+          if (value != null) {
+            print('2');
+            print(value);
+            user = value;
+            readData();
+          }
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -45,19 +46,13 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
   @override
   void dispose() {
     super.dispose();
-   
-     
-    
-    
-
-
   }
 
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
   List<imageClass> imageList = [];
-  UserClass? user ;
+  UserClass? user;
 
   void readData() {
     FirebaseFirestore.instance.collection('Image').get().then((querySnapshot) {
@@ -69,20 +64,21 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             price: document['price'],
             id: document['id']);
 
-          if(user!.favourites.contains(document['id'])){
-            newImage.favourite=true;
-          }
+        if (user!.favourites.contains(document['id'])) {
+          newImage.favourite = true;
+        }
 
         setState(() {
           imageList.add(newImage);
         });
-        
+
         print('3');
-      print(imageList);
+        print(imageList);
       });
     });
   }
-  Future<dynamic> RetrieveUser(String uid ) async {
+
+  Future<dynamic> RetrieveUser(String uid) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -99,19 +95,23 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
       Map<String, dynamic> existingData =
           documentSnapshot.data() as Map<String, dynamic>;
 
-          List<String> stringFavourites = existingData['favourites'].cast<String>();
-          List<String> stringInventory = existingData['inventory'].cast<String>();
-          
-
+      List<String> stringFavourites = existingData['favourites'].cast<String>();
+      List<String> stringInventory = existingData['inventory'].cast<String>();
 
       // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-      UserClass RetrievedUser = new UserClass(uid: uid, account_id: existingData['account_id'], favourites: stringFavourites, name: existingData['name'], profile_edited: existingData['profile_edited'], background_image: existingData['background_image'], avatar_image: existingData['avatar_image'], inventory: stringInventory, wallet: existingData['wallet']);
-      return RetrievedUser ;
-
+      UserClass RetrievedUser = new UserClass(
+          uid: uid,
+          account_id: existingData['account_id'],
+          favourites: stringFavourites,
+          name: existingData['name'],
+          profile_edited: existingData['profile_edited'],
+          background_image: existingData['background_image'],
+          avatar_image: existingData['avatar_image'],
+          inventory: stringInventory,
+          wallet: existingData['wallet']);
+      return RetrievedUser;
     }
-    return null ;
-    
-
+    return null;
   }
 
   FlutterSecureStorage storage = FlutterSecureStorage();
@@ -352,7 +352,7 @@ class _ArtworkState extends State<Artwork> {
     return Image.memory(
       bytes,
       fit: BoxFit.contain,
-      width: MediaQuery.sizeOf(context).width*0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
       height: MediaQuery.sizeOf(context).height *
           0.26, // Resmi widget'ın boyutlarına sığdır
     );
@@ -384,7 +384,8 @@ class _ArtworkState extends State<Artwork> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>  PropertyDetailsWidget( image: widget.image)),
+                  builder: (context) =>
+                      PropertyDetailsWidget(image: widget.image)),
             );
           },
           child: Column(
@@ -409,8 +410,7 @@ class _ArtworkState extends State<Artwork> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: 
-                      Text(
+                      child: Text(
                         widget.image!.name,
                         style: TextStyle(
                           fontFamily: 'Urbanist',
@@ -422,38 +422,36 @@ class _ArtworkState extends State<Artwork> {
                     (widget.image!.favourite == true)
                         ? IconButton(
                             icon: Icon(
-                              Icons.favorite_border,
+                              Icons.favorite,
                               color: Colors.red,
-                              size: 24.0,
+                              size: 35.0,
                             ),
                             onPressed: () {
                               setState(() {
-                                 getGorevliIDFromStorage(context).then((value) {
-                                if (value != '') {
-                                  RemoveFavourites(value , widget.image!.id);
-                                }
+                                getGorevliIDFromStorage(context).then((value) {
+                                  if (value != '') {
+                                    RemoveFavourites(value, widget.image!.id);
+                                  }
+                                });
+                                widget.image!.favourite = false;
                               });
-                              widget.image!.favourite = false;
-                              });
-                             
                             },
                           )
                         : IconButton(
                             icon: Icon(
                               Icons.favorite_border,
                               color: Colors.grey,
-                              size: 24.0,
+                              size: 35.0,
                             ),
                             onPressed: () {
                               setState(() {
                                 getGorevliIDFromStorage(context).then((value) {
-                                if (value != '') {
-                                  AddFavourites(value, widget.image!.id);
-                                }
+                                  if (value != '') {
+                                    AddFavourites(value, widget.image!.id);
+                                  }
+                                });
+                                widget.image!.favourite = true;
                               });
-                              widget.image!.favourite = true;
-                              });
-                              
                             },
                           )
                   ],
@@ -466,7 +464,7 @@ class _ArtworkState extends State<Artwork> {
                   children: [
                     Expanded(
                       child: Text(
-                       widget.image!= null ? widget.image!.author :'',
+                        widget.image != null ? widget.image!.author : '',
                         style: TextStyle(
                           fontFamily: 'Urbanist',
                           color: Theme.of(context).canvasColor,
@@ -529,7 +527,7 @@ class _ArtworkState extends State<Artwork> {
     }
   }
 
-  void AddFavourites(String uid , String imageID) async {
+  void AddFavourites(String uid, String imageID) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -555,7 +553,8 @@ class _ArtworkState extends State<Artwork> {
       print('Veri eklendi/güncellendi: $documentId');
     }
   }
-  void RemoveFavourites(String uid , String imageID) async {
+
+  void RemoveFavourites(String uid, String imageID) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -581,5 +580,4 @@ class _ArtworkState extends State<Artwork> {
       print('Veri eklendi/güncellendi: $documentId');
     }
   }
-  
 }

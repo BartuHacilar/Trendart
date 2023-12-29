@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendart/src/app.dart';
 import 'package:trendart/src/image.dart';
 import 'package:trendart/src/mainpage.dart';
+import 'package:trendart/src/user.dart';
 
 
 class PropertyDetailsWidget extends StatefulWidget {
@@ -33,7 +36,17 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
   @override
   void initState() {
     super.initState();
-    
+    getGorevliIDFromStorage(context).then((value) {
+      if (value != '') {
+        RetrieveUser(value).then((value) {
+          if (value != null) {
+            setState(() {
+              user = value;
+            });
+          }
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -42,6 +55,64 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
   void dispose() {
    
     super.dispose();
+  }
+  FlutterSecureStorage storage = FlutterSecureStorage();
+  String UserUid = '';
+  UserClass? user;
+
+  Future<String> getGorevliIDFromStorage(BuildContext context) async {
+    UserUid = (await storage.read(key: "UserUid"))!;
+    if (UserUid == '') {
+      final prefs = await SharedPreferences.getInstance();
+      UserUid = prefs.getString('UserUid')!;
+      if (UserUid == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sistem Hatası Tekrar Deneyin"),
+          ),
+        );
+        return UserUid;
+      } else {
+        return UserUid;
+      }
+    } else {
+      return UserUid;
+    }
+  }
+  Future<dynamic> RetrieveUser(String uid) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+
+    // Firestore'da account_id değeri 3 olan belgeleri bul
+    QuerySnapshot querySnapshot =
+        await usersCollection.where('account_id', isEqualTo: uid).get();
+
+    // Her belgeyi gez ve veri eklemeyi gerçekleştir
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      // Belge ID'sini al
+      String documentId = documentSnapshot.id;
+
+      // Belge içeriğini al
+      Map<String, dynamic> existingData =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      List<String> stringFavourites = existingData['favourites'].cast<String>();
+      List<String> stringInventory = existingData['inventory'].cast<String>();
+
+      // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+      UserClass RetrievedUser = new UserClass(
+          uid: uid,
+          account_id: existingData['account_id'],
+          favourites: stringFavourites,
+          name: existingData['name'],
+          profile_edited: existingData['profile_edited'],
+          background_image: existingData['background_image'],
+          avatar_image: existingData['avatar_image'],
+          inventory: stringInventory,
+          wallet: existingData['wallet']);
+      return RetrievedUser;
+    }
+    return null;
   }
 
   @override
@@ -228,6 +299,16 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       ],
                     ),
                   ),
+                  InkWell(
+      onTap: () {
+        // Container'a tıklandığında yapılacak işlemler buraya gelir
+        if(user!.wallet>widget.image!.price){
+          print('purchase girildi');
+          purchase(user!.account_id, user!.wallet - widget.image!.price);
+
+        }
+      },
+      child:
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.height * 0.07,
@@ -277,6 +358,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       ],
                     ),
                   ),
+                  ),
                 ],
               ),
             ),
@@ -298,4 +380,32 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
           1, // Resmi widget'ın boyutlarına sığdır
     );
   }
+  Future<void> purchase(String userId, int newAmount) async {
+  try {
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('User');
+  
+  // Firestore'da account_id değeri 3 olan belgeleri bul
+  QuerySnapshot querySnapshot = await usersCollection.where('account_id', isEqualTo: userId).get();
+
+  // Her belgeyi gez ve veri eklemeyi gerçekleştir
+  for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+    // Belge ID'sini al
+    String documentId = documentSnapshot.id;
+
+    // Belge içeriğini al
+    Map<String, dynamic> existingData = documentSnapshot.data() as Map<String, dynamic>;
+
+    // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+    existingData['wallet'] = newAmount;
+
+    // Belgeyi güncelle
+    await usersCollection.doc(documentId).set(existingData);
+    
+    print('Veri eklendi/güncellendi: $documentId');
+  }
+
+  } catch (error) {
+    print('Satın alma işlemi sırasında bir hata oluştu: $error');
+  }
+}
 }

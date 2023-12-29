@@ -203,7 +203,7 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
                                   size: 24.0,
                                 ),
                                 Text(
-                                  '35 \$',
+                                  '${user!.wallet} \$',
                                   style: TextStyle(
                                     fontFamily: 'Urbanist',
                                     color: Theme.of(context)
@@ -423,9 +423,9 @@ class _ArtworkState extends State<Artwork> {
                     (widget.image!.favourite == true)
                         ? IconButton(
                             icon: Icon(
-                              Icons.favorite_border,
+                              Icons.favorite,
                               color: Colors.red,
-                              size: 24.0,
+                              size: 35.0,
                             ),
                             onPressed: () {
                               setState(() {
@@ -443,7 +443,7 @@ class _ArtworkState extends State<Artwork> {
                             icon: Icon(
                               Icons.favorite_border,
                               color: Colors.grey,
-                              size: 24.0,
+                              size: 35.0,
                             ),
                             onPressed: () {
                               setState(() {
