@@ -58,7 +58,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           children: [
             Container(
               width: double.infinity,
-              height: 450,
+              height: MediaQuery.of(context).size.height * 0.7,
               decoration: BoxDecoration(
                 color: Color(0xFFC6B8AE),
                 boxShadow: [
@@ -315,7 +315,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 primary: Colors.transparent,
                                 textStyle: TextStyle(
                                   color: Color(0xFFD9E8E5),
-                                  fontSize: 50,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 padding: EdgeInsets.symmetric(
