@@ -33,12 +33,16 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
           if (value != null) {
             print('2');
             print(value);
-            user = value;
+            setState(() {
+               user = value;
             readData();
+            });
+           
           }
         });
       }
     });
+    
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -62,6 +66,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             author: document['author'],
             name: document['name'],
             price: document['price'],
+            description: document['description'],
             id: document['id']);
 
         if (user!.favourites.contains(document['id'])) {
@@ -172,7 +177,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          'Hoşgeldin ',
+                          'Hoşgeldiniz ',
                           style: TextStyle(
                             fontFamily: 'Urbanist',
                             color: Color(0xFFB5205A),
@@ -226,7 +231,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                       width: double.infinity,
                       height: 60.0,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(198, 184, 174, 1),
+                        color: Color.fromRGBO(200, 160, 131, 1),
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                       alignment: AlignmentDirectional(0.0, 0.0),
