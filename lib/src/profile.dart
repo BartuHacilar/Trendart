@@ -213,7 +213,7 @@ class _ProfileWidgetState extends State<ProfileWidget>
                           alignment: AlignmentDirectional(0.9, 0.0),
                           child: IconButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>

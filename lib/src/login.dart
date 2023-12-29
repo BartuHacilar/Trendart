@@ -39,6 +39,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       key: scaffoldKey,
       backgroundColor: Color(0xFFBBB8DA),
       body: Container(
@@ -257,7 +258,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       storeGorevliIDToStorage(
                                               context, value.user!.uid)
                                           .then((value) {
-                                        if (value != null) {
+                                       if (value != null) {
                                           print(value);
                                           Navigator.pushReplacement(
                                             context,
