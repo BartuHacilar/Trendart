@@ -465,7 +465,15 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
         content: Text('Artwork Successfully Bought'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+               Navigator.pop(context);
+               Navigator.pop(context);
+              Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      HomePageMAINWidget()),
+            );},
             child: Text('Continue'),
           ),
         ],
