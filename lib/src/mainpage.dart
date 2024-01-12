@@ -35,7 +35,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             print(value);
             setState(() {
                user = value;
-            readData();
+            readData(value);
             });
            
           }
@@ -58,7 +58,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
   List<imageClass> imageList = [];
   UserClass? user;
 
-  void readData() {
+  void readData(UserClass user) {
     FirebaseFirestore.instance.collection('Image').get().then((querySnapshot) {
       querySnapshot.docs.forEach((document) {
         imageClass newImage = imageClass(
@@ -67,14 +67,18 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             name: document['name'],
             price: document['price'],
             description: document['description'],
-            id: document['id']);
+            id: document['id'],
+            owner:document['owner']);
 
         if (user!.favourites.contains(document['id'])) {
           newImage.favourite = true;
         }
 
         setState(() {
-          imageList.add(newImage);
+          if(newImage.owner == '' && newImage.owner == user.account_id){
+            imageList.add(newImage);
+          }
+          
         });
 
         print('3');
@@ -370,7 +374,7 @@ class _ArtworkState extends State<Artwork> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Color(0xFF97795F),
+          color: widget.image!.owner == ''? Color(0xFF97795F) : Color.fromARGB(255, 95, 151, 104),
           boxShadow: [
             BoxShadow(
               blurRadius: 4.0,
@@ -490,6 +494,7 @@ class _ArtworkState extends State<Artwork> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      widget.image!.owner == ''?
                       Text(
                         '${widget.image!.price.toString()} \$',
                         style: TextStyle(
@@ -497,7 +502,17 @@ class _ArtworkState extends State<Artwork> {
                           color: Theme.of(context).canvasColor,
                           fontSize: 25.0,
                         ),
-                      ),
+                      )
+                      :
+                      Text(
+                        'Owned',
+                        style: TextStyle(
+                          fontFamily: 'Urbanist',
+                          color: Theme.of(context).canvasColor,
+                          fontSize: 25.0,
+                        ),
+                      )
+                      ,
                     ],
                   ),
                 ),

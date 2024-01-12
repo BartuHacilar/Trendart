@@ -299,12 +299,13 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       ],
                     ),
                   ),
-                  InkWell(
+                  widget.image!.owner == ''?
+                      InkWell(
       onTap: () {
         // Container'a tıklandığında yapılacak işlemler buraya gelir
         if(user!.wallet>widget.image!.price){
           print('purchase girildi');
-          purchase(user!.account_id, user!.wallet - widget.image!.price);
+          purchase(user!.account_id, user!.wallet - widget.image!.price , widget.image!.id);
 
         }
       },
@@ -358,7 +359,41 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       ],
                     ),
                   ),
-                  ),
+                  )
+                      :
+                      Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFFEE7D4),
+                          Color.fromRGBO(98, 173, 55, 1)
+                        ],
+                        stops: [0.0, 1.0],
+                        begin: AlignmentDirectional(0.0, -1.0),
+                        end: AlignmentDirectional(0, 1.0),
+                      ),
+                      borderRadius: BorderRadius.circular(12.0),
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Owned',
+                          style: TextStyle(
+                            fontFamily: 'Urbanist',
+                            color: Theme.of(context).textTheme.bodyText1!.color,
+                            fontSize: 30.0,
+                          ),
+                        ),
+                        
+                      ],
+                    ),
+                  )
+                  ,
                 ],
               ),
             ),
@@ -380,32 +415,62 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
           1, // Resmi widget'ın boyutlarına sığdır
     );
   }
-  Future<void> purchase(String userId, int newAmount) async {
+  Future<void> purchase(String userId, int newAmount , String imageID) async {
+  final CollectionReference usersCollection = FirebaseFirestore.instance.collection('User');
+  final CollectionReference imageCollection = FirebaseFirestore.instance.collection('Image');
+
   try {
-    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('User');
-  
-  // Firestore'da account_id değeri 3 olan belgeleri bul
-  QuerySnapshot querySnapshot = await usersCollection.where('account_id', isEqualTo: userId).get();
+    await FirebaseFirestore.instance.runTransaction((Transaction transaction) async {
+      QuerySnapshot querySnapshot = await usersCollection.where('account_id', isEqualTo: userId).get();
 
-  // Her belgeyi gez ve veri eklemeyi gerçekleştir
-  for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-    // Belge ID'sini al
-    String documentId = documentSnapshot.id;
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        String documentId = documentSnapshot.id;
+        Map<String, dynamic> existingData = documentSnapshot.data() as Map<String, dynamic>;
+        int currentWalletAmount = existingData['wallet'] ?? 0;
 
-    // Belge içeriğini al
-    Map<String, dynamic> existingData = documentSnapshot.data() as Map<String, dynamic>;
+        // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+        existingData['wallet'] = currentWalletAmount + newAmount;
 
-    // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-    existingData['wallet'] = newAmount;
+        // Belgeyi güncelle
+        transaction.update(usersCollection.doc(documentId), existingData);
 
-    // Belgeyi güncelle
-    await usersCollection.doc(documentId).set(existingData);
-    
-    print('Veri eklendi/güncellendi: $documentId');
-  }
+        print('Veri eklendi/güncellendi: $documentId');
+      }
 
+      QuerySnapshot querySnapshotImage = await imageCollection.where('id', isEqualTo: imageID).get();
+
+      for (QueryDocumentSnapshot documentSnapshotImage in querySnapshotImage.docs) {
+        String imagedocumentId = documentSnapshotImage.id;
+        Map<String, dynamic> imageData = documentSnapshotImage.data() as Map<String, dynamic>;
+        
+
+        // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+        imageData['owner'] =  imageID;
+
+        // Belgeyi güncelle
+        transaction.update(imageCollection.doc(imagedocumentId), imageData);
+
+        print('Veri eklendi/güncellendi: $imagedocumentId');
+      }
+    });
+
+    print('İşlem başarıyla tamamlandı');
   } catch (error) {
     print('Satın alma işlemi sırasında bir hata oluştu: $error');
   }
+  showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('Artwork Successfully Bought'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Continue'),
+          ),
+        ],
+      ),
+    );
 }
+
 }
