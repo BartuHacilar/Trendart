@@ -9,6 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendart/src/user.dart';
+import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
+import 'dart:ui';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'image.dart';
 
@@ -26,18 +29,20 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
   void initState() {
     super.initState();
     getGorevliIDFromStorage(context).then((value) {
+      loading = true;
       print('1');
       print(value);
-                                if (value != '') {
-                                  RetrieveUser(value).then((value) {if(value!=null){
-                                    print('2');
-      print(value);
-                                    user=value;
-                                    readData(value);
-                                    
-                                  }});
-                                }
-                              });
+      if (value != '') {
+        RetrieveUser(value).then((value) {
+          if (value != null) {
+            print('2');
+            print(value);
+            user = value;
+            readData(value);
+          }
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -45,19 +50,13 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
   @override
   void dispose() {
     super.dispose();
-   
-     
-    
-    
-
-
   }
 
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
   List<imageClass> imageList = [];
-  UserClass? user ;
+  UserClass? user;
 
   void readData(UserClass user) {
     FirebaseFirestore.instance.collection('Image').get().then((querySnapshot) {
@@ -69,28 +68,26 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
             price: document['price'],
             description: document['description'],
             id: document['id'],
-            owner:document['owner']);
+            owner: document['owner']);
 
-          if(user!.favourites.contains(document['id'])){
-            newImage.favourite=true;
-            
-           setState(() {
-          if(newImage.owner == '' && newImage.owner == user.account_id){
-            imageList.add(newImage);
-          }
-          
-        });
+        if (user!.favourites.contains(document['id'])) {
+          newImage.favourite = true;
 
-          }
+          setState(() {
+            if (newImage.owner == '' && newImage.owner == user.account_id) {
+              imageList.add(newImage);
+            }
+          });
+        }
 
-        
-        
         print('3');
-      print(imageList);
+        loading = false;
+        print(imageList);
       });
     });
   }
-  Future<dynamic> RetrieveUser(String uid ) async {
+
+  Future<dynamic> RetrieveUser(String uid) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -107,19 +104,23 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
       Map<String, dynamic> existingData =
           documentSnapshot.data() as Map<String, dynamic>;
 
-          List<String> stringFavourites = existingData['favourites'].cast<String>();
-          List<String> stringInventory = existingData['inventory'].cast<String>();
-          
-
+      List<String> stringFavourites = existingData['favourites'].cast<String>();
+      List<String> stringInventory = existingData['inventory'].cast<String>();
 
       // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-      UserClass RetrievedUser = new UserClass(uid: uid, account_id: existingData['account_id'], favourites: stringFavourites, name: existingData['name'], profile_edited: existingData['profile_edited'], background_image: existingData['background_image'], avatar_image: existingData['avatar_image'], inventory: stringInventory, wallet: existingData['wallet']);
-      return RetrievedUser ;
-
+      UserClass RetrievedUser = new UserClass(
+          uid: uid,
+          account_id: existingData['account_id'],
+          favourites: stringFavourites,
+          name: existingData['name'],
+          profile_edited: existingData['profile_edited'],
+          background_image: existingData['background_image'],
+          avatar_image: existingData['avatar_image'],
+          inventory: stringInventory,
+          wallet: existingData['wallet']);
+      return RetrievedUser;
     }
-    return null ;
-    
-
+    return null;
   }
 
   FlutterSecureStorage storage = FlutterSecureStorage();
@@ -145,198 +146,216 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
     }
   }
 
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Color(0xFFCFBDA3),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 150.0,
-              decoration: BoxDecoration(
-                color: Color(0xFFC6B8AE),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 3.0,
-                    color: Color(0x39000000),
-                    offset: Offset(0.0, 2.0),
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Hoşgeldiniz ',
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            color: Color(0xFFB5205A),
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Align(
-                          alignment: AlignmentDirectional(1.0, 1.0),
-                          child: Container(
-                            width: 90.0,
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF78B17B),
-                              borderRadius: BorderRadius.circular(14.0),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.wallet,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color,
-                                  size: 24.0,
-                                ),
-                                Text(
-                                  '${user!.wallet} \$',
-                                  style: TextStyle(
-                                    fontFamily: 'Urbanist',
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color,
-                                    fontSize: 20.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 60.0,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(198, 184, 174, 1),
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      alignment: AlignmentDirectional(0.0, 0.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  4.0, 0.0, 4.0, 0.0),
-                              child: TextFormField(
-                                controller: textController,
-                                focusNode: textFieldFocusNode,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(
-                                    fontFamily: 'Urbanist',
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .color,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Urbanist',
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 8.0, 0.0),
-                            child: ElevatedButton.icon(
-                              onPressed: () async {},
-                              icon: Icon(
-                                Icons.manage_search,
-                                size: 15.0,
-                              ),
-                              label: SizedBox.shrink(),
-                              style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
-              child: ListView(
-                padding: EdgeInsets.zero,
-                primary: false,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: imageList
-                    .map((imageClass) => Artwork(image: imageClass))
-                    .toList(),
-              ),
-            ),
-          ],
+    const purpleColor = Colors.purple;
+    const black97Color = Colors.black87;
+    return BlurryModalProgressHUD(
+        inAsyncCall: loading,
+        blurEffectIntensity: 4,
+        progressIndicator: SpinKitFadingCircle(
+          color: purpleColor,
+          size: 90.0,
         ),
-      ),
-    );
+        dismissible: false,
+        opacity: 0.4,
+        color: black97Color,
+        child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: Color(0xFFCFBDA3),
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 150.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFC6B8AE),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3.0,
+                        color: Color(0x39000000),
+                        offset: Offset(0.0, 2.0),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            24.0, 0.0, 24.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              'Hoşgeldiniz ',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Color(0xFFB5205A),
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(1.0, 1.0),
+                              child: Container(
+                                width: 90.0,
+                                height: 50.0,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF78B17B),
+                                  borderRadius: BorderRadius.circular(14.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.wallet,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                      size: 24.0,
+                                    ),
+                                    Text(
+                                      '${user!.wallet} \$',
+                                      style: TextStyle(
+                                        fontFamily: 'Urbanist',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            16.0, 16.0, 16.0, 0.0),
+                        child: Container(
+                          width: double.infinity,
+                          height: 60.0,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(198, 184, 174, 1),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          alignment: AlignmentDirectional(0.0, 0.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      4.0, 0.0, 4.0, 0.0),
+                                  child: TextFormField(
+                                    controller: textController,
+                                    focusNode: textFieldFocusNode,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelStyle: TextStyle(
+                                        fontFamily: 'Urbanist',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .color,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    style: TextStyle(
+                                      fontFamily: 'Urbanist',
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 8.0, 0.0),
+                                child: ElevatedButton.icon(
+                                  onPressed: () async {},
+                                  icon: Icon(
+                                    Icons.manage_search,
+                                    size: 15.0,
+                                  ),
+                                  label: SizedBox.shrink(),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    primary: false,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    children: imageList
+                        .map((imageClass) => Artwork(image: imageClass))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -360,7 +379,7 @@ class _ArtworkState extends State<Artwork> {
     return Image.memory(
       bytes,
       fit: BoxFit.contain,
-      width: MediaQuery.sizeOf(context).width*0.9,
+      width: MediaQuery.sizeOf(context).width * 0.9,
       height: MediaQuery.sizeOf(context).height *
           0.26, // Resmi widget'ın boyutlarına sığdır
     );
@@ -373,7 +392,9 @@ class _ArtworkState extends State<Artwork> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: widget.image!.owner == ''? Color(0xFF97795F) : Color.fromARGB(255, 95, 151, 104),
+          color: widget.image!.owner == ''
+              ? Color(0xFF97795F)
+              : Color.fromARGB(255, 95, 151, 104),
           boxShadow: [
             BoxShadow(
               blurRadius: 4.0,
@@ -392,7 +413,8 @@ class _ArtworkState extends State<Artwork> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>  PropertyDetailsWidget( image: widget.image)),
+                  builder: (context) =>
+                      PropertyDetailsWidget(image: widget.image)),
             );
           },
           child: Column(
@@ -417,8 +439,7 @@ class _ArtworkState extends State<Artwork> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: 
-                      Text(
+                      child: Text(
                         widget.image!.name,
                         style: TextStyle(
                           fontFamily: 'Urbanist',
@@ -436,14 +457,13 @@ class _ArtworkState extends State<Artwork> {
                             ),
                             onPressed: () {
                               setState(() {
-                                 getGorevliIDFromStorage(context).then((value) {
-                                if (value != '') {
-                                  RemoveFavourites(value , widget.image!.id);
-                                }
+                                getGorevliIDFromStorage(context).then((value) {
+                                  if (value != '') {
+                                    RemoveFavourites(value, widget.image!.id);
+                                  }
+                                });
+                                widget.image!.favourite = false;
                               });
-                              widget.image!.favourite = false;
-                              });
-                             
                             },
                           )
                         : IconButton(
@@ -455,13 +475,12 @@ class _ArtworkState extends State<Artwork> {
                             onPressed: () {
                               setState(() {
                                 getGorevliIDFromStorage(context).then((value) {
-                                if (value != '') {
-                                  AddFavourites(value, widget.image!.id);
-                                }
+                                  if (value != '') {
+                                    AddFavourites(value, widget.image!.id);
+                                  }
+                                });
+                                widget.image!.favourite = true;
                               });
-                              widget.image!.favourite = true;
-                              });
-                              
                             },
                           )
                   ],
@@ -474,7 +493,7 @@ class _ArtworkState extends State<Artwork> {
                   children: [
                     Expanded(
                       child: Text(
-                       widget.image!= null ? widget.image!.author :'',
+                        widget.image != null ? widget.image!.author : '',
                         style: TextStyle(
                           fontFamily: 'Urbanist',
                           color: Theme.of(context).canvasColor,
@@ -495,24 +514,23 @@ class _ArtworkState extends State<Artwork> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                       widget.image!.owner == ''?
-                      Text(
-                        '${widget.image!.price.toString()} \$',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          color: Theme.of(context).canvasColor,
-                          fontSize: 25.0,
-                        ),
-                      )
-                      :
-                      Text(
-                        'Owned',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          color: Theme.of(context).canvasColor,
-                          fontSize: 25.0,
-                        ),
-                      ),
+                      widget.image!.owner == ''
+                          ? Text(
+                              '${widget.image!.price.toString()} \$',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Theme.of(context).canvasColor,
+                                fontSize: 25.0,
+                              ),
+                            )
+                          : Text(
+                              'Owned',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Theme.of(context).canvasColor,
+                                fontSize: 25.0,
+                              ),
+                            ),
                     ],
                   ),
                 ),
@@ -547,7 +565,7 @@ class _ArtworkState extends State<Artwork> {
     }
   }
 
-  void AddFavourites(String uid , String imageID) async {
+  void AddFavourites(String uid, String imageID) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -573,7 +591,8 @@ class _ArtworkState extends State<Artwork> {
       print('Veri eklendi/güncellendi: $documentId');
     }
   }
-  void RemoveFavourites(String uid , String imageID) async {
+
+  void RemoveFavourites(String uid, String imageID) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
 
@@ -599,5 +618,4 @@ class _ArtworkState extends State<Artwork> {
       print('Veri eklendi/güncellendi: $documentId');
     }
   }
-  
 }

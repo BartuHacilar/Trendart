@@ -9,6 +9,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trendart/src/user.dart';
+import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
+import 'dart:ui';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'image.dart';
 
@@ -26,6 +29,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
   void initState() {
     super.initState();
     getGorevliIDFromStorage(context).then((value) {
+      loading = true;
       print('1');
       print(value);
       if (value != '') {
@@ -34,15 +38,13 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             print('2');
             print(value);
             setState(() {
-               user = value;
-            readData(value);
+              user = value;
+              readData(value);
             });
-           
           }
         });
       }
     });
-    
 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
@@ -68,20 +70,20 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             price: document['price'],
             description: document['description'],
             id: document['id'],
-            owner:document['owner']);
+            owner: document['owner']);
 
         if (user!.favourites.contains(document['id'])) {
           newImage.favourite = true;
         }
 
         setState(() {
-          if(newImage.owner == '' && newImage.owner == user.account_id){
+          if (newImage.owner == '' && newImage.owner == user.account_id) {
             imageList.add(newImage);
           }
-          
         });
 
         print('3');
+        loading = false;
         print(imageList);
       });
     });
@@ -146,198 +148,216 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
     }
   }
 
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Color(0xFFCFBDA3),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 150.0,
-              decoration: BoxDecoration(
-                color: Color(0xFFC6B8AE),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 3.0,
-                    color: Color(0x39000000),
-                    offset: Offset(0.0, 2.0),
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          'Hoşgeldiniz ',
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            color: Color(0xFFB5205A),
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        Align(
-                          alignment: AlignmentDirectional(1.0, 1.0),
-                          child: Container(
-                            width: 90.0,
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF78B17B),
-                              borderRadius: BorderRadius.circular(14.0),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.wallet,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color,
-                                  size: 24.0,
-                                ),
-                                Text(
-                                  '${user!.wallet.toString()}\$',
-                                  style: TextStyle(
-                                    fontFamily: 'Urbanist',
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color,
-                                    fontSize: 20.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
-                    child: Container(
-                      width: double.infinity,
-                      height: 60.0,
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(200, 160, 131, 1),
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      alignment: AlignmentDirectional(0.0, 0.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  4.0, 0.0, 4.0, 0.0),
-                              child: TextFormField(
-                                controller: textController,
-                                focusNode: textFieldFocusNode,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(
-                                    fontFamily: 'Urbanist',
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText2!
-                                        .color,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Color(0x00000000),
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                                style: TextStyle(
-                                  fontFamily: 'Urbanist',
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
-                                0.0, 0.0, 8.0, 0.0),
-                            child: ElevatedButton.icon(
-                              onPressed: () async {},
-                              icon: Icon(
-                                Icons.manage_search,
-                                size: 15.0,
-                              ),
-                              label: SizedBox.shrink(),
-                              style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
-              child: ListView(
-                padding: EdgeInsets.zero,
-                primary: false,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                children: imageList
-                    .map((imageClass) => Artwork(image: imageClass))
-                    .toList(),
-              ),
-            ),
-          ],
+    const purpleColor = Colors.purple;
+    const black97Color = Colors.black87;
+    return BlurryModalProgressHUD(
+        inAsyncCall: loading,
+        blurEffectIntensity: 4,
+        progressIndicator: SpinKitFadingCircle(
+          color: purpleColor,
+          size: 90.0,
         ),
-      ),
-    );
+        dismissible: false,
+        opacity: 0.4,
+        color: black97Color,
+        child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: Color(0xFFCFBDA3),
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 150.0,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFC6B8AE),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 3.0,
+                        color: Color(0x39000000),
+                        offset: Offset(0.0, 2.0),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            24.0, 0.0, 24.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              'Hoşgeldiniz ',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Color(0xFFB5205A),
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            Align(
+                              alignment: AlignmentDirectional(1.0, 1.0),
+                              child: Container(
+                                width: 90.0,
+                                height: 50.0,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF78B17B),
+                                  borderRadius: BorderRadius.circular(14.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(
+                                      Icons.wallet,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                      size: 24.0,
+                                    ),
+                                    Text(
+                                      '${user!.wallet.toString()}\$',
+                                      style: TextStyle(
+                                        fontFamily: 'Urbanist',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                            16.0, 16.0, 16.0, 0.0),
+                        child: Container(
+                          width: double.infinity,
+                          height: 60.0,
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(200, 160, 131, 1),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          alignment: AlignmentDirectional(0.0, 0.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      4.0, 0.0, 4.0, 0.0),
+                                  child: TextFormField(
+                                    controller: textController,
+                                    focusNode: textFieldFocusNode,
+                                    obscureText: false,
+                                    decoration: InputDecoration(
+                                      labelStyle: TextStyle(
+                                        fontFamily: 'Urbanist',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText2!
+                                            .color,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0x00000000),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    style: TextStyle(
+                                      fontFamily: 'Urbanist',
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 8.0, 0.0),
+                                child: ElevatedButton.icon(
+                                  onPressed: () async {},
+                                  icon: Icon(
+                                    Icons.manage_search,
+                                    size: 15.0,
+                                  ),
+                                  label: SizedBox.shrink(),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    primary: false,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    children: imageList
+                        .map((imageClass) => Artwork(image: imageClass))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -374,7 +394,9 @@ class _ArtworkState extends State<Artwork> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: widget.image!.owner == ''? Color(0xFF97795F) : Color.fromARGB(255, 95, 151, 104),
+          color: widget.image!.owner == ''
+              ? Color(0xFF97795F)
+              : Color.fromARGB(255, 95, 151, 104),
           boxShadow: [
             BoxShadow(
               blurRadius: 4.0,
@@ -494,25 +516,23 @@ class _ArtworkState extends State<Artwork> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      widget.image!.owner == ''?
-                      Text(
-                        '${widget.image!.price.toString()} \$',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          color: Theme.of(context).canvasColor,
-                          fontSize: 25.0,
-                        ),
-                      )
-                      :
-                      Text(
-                        'Owned',
-                        style: TextStyle(
-                          fontFamily: 'Urbanist',
-                          color: Theme.of(context).canvasColor,
-                          fontSize: 25.0,
-                        ),
-                      )
-                      ,
+                      widget.image!.owner == ''
+                          ? Text(
+                              '${widget.image!.price.toString()} \$',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Theme.of(context).canvasColor,
+                                fontSize: 25.0,
+                              ),
+                            )
+                          : Text(
+                              'Owned',
+                              style: TextStyle(
+                                fontFamily: 'Urbanist',
+                                color: Theme.of(context).canvasColor,
+                                fontSize: 25.0,
+                              ),
+                            ),
                     ],
                   ),
                 ),
