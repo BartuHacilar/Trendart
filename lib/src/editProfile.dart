@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class EditProfileWidget extends StatefulWidget {
   const EditProfileWidget({
     Key? key,
     
   }) : super(key: key);
-
- 
 
   @override
   _EditProfileWidgetState createState() => _EditProfileWidgetState();

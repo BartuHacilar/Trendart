@@ -37,6 +37,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:false,
       key: scaffoldKey,
       backgroundColor: Color(0xFFBBB8DA),
       body: Container(

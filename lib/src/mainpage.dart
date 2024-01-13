@@ -55,10 +55,11 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
     super.dispose();
   }
 
-  FocusNode? textFieldFocusNode;
-  TextEditingController? textController;
+FocusNode? textFieldFocusNode;
+  TextEditingController textController = new TextEditingController();
   String? Function(BuildContext, String?)? textControllerValidator;
   List<imageClass> imageList = [];
+  List<imageClass> allImages = [];
   UserClass? user;
 
   void readData(UserClass user) {
@@ -82,6 +83,9 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
             imageList.add(newImage);
           }
         });
+        setState(() {
+        allImages = imageList.toList();
+      });
 
         print('3');
         loading = false;
@@ -149,6 +153,45 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
     }
   }
 
+  void SearchFunction(String searchTerm) {
+    List<imageClass> DesiredAccounts = [];
+    bool check1 = false;
+    bool check2 = false;
+    bool check3 = false;
+    bool check4 = false;
+
+  
+
+      for (var element in allImages) {
+        if (element.name
+            .toLowerCase()
+            .trim()
+            .startsWith(searchTerm.toLowerCase().trim())) {
+          if (!DesiredAccounts.contains(element)) {
+            setState(() {
+              DesiredAccounts.add(element);
+            });
+            
+          }
+        }
+        
+      }
+
+      
+      
+   
+
+    if (searchTerm != '') {
+      setState(() {
+        imageList = DesiredAccounts.toList();
+      });
+    } else {
+      setState(() {
+        imageList = allImages.toList();
+      });
+    }
+  }
+
   bool loading = false;
   @override
   Widget build(BuildContext context) {
@@ -165,6 +208,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
         opacity: 0.4,
         color: black97Color,
         child: Scaffold(
+          
           key: scaffoldKey,
           backgroundColor: Color(0xFFCFBDA3),
           body: SingleChildScrollView(
@@ -322,7 +366,11 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 8.0, 0.0),
                                 child: ElevatedButton.icon(
-                                  onPressed: () async {},
+                                  onPressed: () async {
+                                
+                                SearchFunction(textController.text);
+
+                              },
                                   icon: Icon(
                                     Icons.manage_search,
                                     size: 15.0,

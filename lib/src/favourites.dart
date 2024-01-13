@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:trendart/src/detailsPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,7 +10,6 @@ import 'package:trendart/src/user.dart';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'dart:ui';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'image.dart';
 
 class FavouriteWidget extends StatefulWidget {
@@ -53,9 +50,10 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
   }
 
   FocusNode? textFieldFocusNode;
-  TextEditingController? textController;
+  TextEditingController textController = new TextEditingController();
   String? Function(BuildContext, String?)? textControllerValidator;
   List<imageClass> imageList = [];
+  List<imageClass> allImages = [];
   UserClass? user;
 
   void readData(UserClass user) {
