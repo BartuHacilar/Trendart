@@ -10,16 +10,12 @@ import 'package:trendart/src/image.dart';
 import 'package:trendart/src/mainpage.dart';
 import 'package:trendart/src/user.dart';
 
-
 class PropertyDetailsWidget extends StatefulWidget {
-  const PropertyDetailsWidget( {
-   this.image,
+  const PropertyDetailsWidget({
+    this.image,
     Key? key,
-    
   }) : super(key: key);
   final imageClass? image;
-
-  
 
   @override
   _PropertyDetailsWidgetState createState() => _PropertyDetailsWidgetState();
@@ -27,11 +23,7 @@ class PropertyDetailsWidget extends StatefulWidget {
 
 class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
     with TickerProviderStateMixin {
- 
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  
-  
 
   @override
   void initState() {
@@ -53,9 +45,9 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
 
   @override
   void dispose() {
-   
     super.dispose();
   }
+
   FlutterSecureStorage storage = FlutterSecureStorage();
   String UserUid = '';
   UserClass? user;
@@ -79,6 +71,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
       return UserUid;
     }
   }
+
   Future<dynamic> RetrieveUser(String uid) async {
     final CollectionReference usersCollection =
         FirebaseFirestore.instance.collection('User');
@@ -117,10 +110,6 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
 
   @override
   Widget build(BuildContext context) {
-    
-
-    
-
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Color(0xFFCFBDA3),
@@ -133,7 +122,8 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 44.0, 0.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(0.0, 44.0, 0.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -154,15 +144,14 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                                   focusColor: Colors.transparent,
                                   hoverColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
-                                  onTap: () async {
-                                    
-                                  },
+                                  onTap: () async {},
                                   child: Hero(
                                     tag: 'mainImage',
                                     transitionOnUserGestures: true,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
-                                      child: buildImageFromBase64(widget.image!.base64),
+                                      child: buildImageFromBase64(
+                                          widget.image!.base64),
                                     ),
                                   ),
                                 ),
@@ -174,7 +163,8 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                                   children: [
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         InkWell(
                                           splashColor: Colors.transparent,
@@ -185,10 +175,12 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                                             Navigator.pop(context);
                                           },
                                           child: Card(
-                                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                                            clipBehavior:
+                                                Clip.antiAliasWithSaveLayer,
                                             color: Color(0x3A000000),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
                                             ),
                                             child: IconButton(
                                               icon: Icon(
@@ -214,16 +206,18 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Expanded(
                           child: Text(
-                            widget.image!.name ,
+                            widget.image!.name,
                             style: TextStyle(
                               fontFamily: 'Urbanist',
-                              color: Theme.of(context).textTheme.bodyText1!.color,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
                               fontSize: 24.0,
                             ),
                           ),
@@ -242,7 +236,8 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -251,7 +246,8 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                             widget.image!.author,
                             style: TextStyle(
                               fontFamily: 'Lexend Deca',
-                              color: Theme.of(context).textTheme.bodyText1!.color,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
                               fontSize: 20.0,
                               fontWeight: FontWeight.normal,
                             ),
@@ -261,7 +257,8 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -278,18 +275,23 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 0.0, 0.0, 24.0),
                             child: Text(
                               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.',
                               style: TextStyle(
                                 fontFamily: 'Lexend Deca',
-                                color: Theme.of(context).textTheme.bodyText2!.color,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2!
+                                    .color,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.normal,
                               ),
@@ -299,101 +301,111 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
                       ],
                     ),
                   ),
-                  widget.image!.owner == ''?
-                      InkWell(
-      onTap: () {
-        // Container'a tıklandığında yapılacak işlemler buraya gelir
-        if(user!.wallet>widget.image!.price){
-          print('purchase girildi');
-          purchase(user!.account_id, user!.wallet - widget.image!.price , widget.image!.id);
-
-        }
-      },
-      child:
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFFEE7D4),
-                          Color.fromRGBO(173, 120, 55, 1)
-                        ],
-                        stops: [0.0, 1.0],
-                        begin: AlignmentDirectional(0.0, -1.0),
-                        end: AlignmentDirectional(0, 1.0),
-                      ),
-                      borderRadius: BorderRadius.circular(12.0),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          '${widget.image!.price.toString()} \$',
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            color: Theme.of(context).textTheme.bodyText1!.color,
-                            fontSize: 30.0,
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'Buy Now ',
-                              style: TextStyle(
-                                fontFamily: 'Urbanist',
-                                color: Theme.of(context).textTheme.bodyText1!.color,
-                                fontSize: 20.0,
+                  widget.image!.owner == ''
+                      ? InkWell(
+                          onTap: () {
+                            // Container'a tıklandığında yapılacak işlemler buraya gelir
+                            if (user!.wallet > widget.image!.price) {
+                              print('purchase girildi');
+                              purchase(
+                                  user!.account_id,
+                                  user!.wallet - widget.image!.price,
+                                  widget.image!.id);
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: MediaQuery.of(context).size.height * 0.07,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFFFEE7D4),
+                                  Color.fromRGBO(173, 120, 55, 1)
+                                ],
+                                stops: [0.0, 1.0],
+                                begin: AlignmentDirectional(0.0, -1.0),
+                                end: AlignmentDirectional(0, 1.0),
                               ),
+                              borderRadius: BorderRadius.circular(12.0),
+                              shape: BoxShape.rectangle,
                             ),
-                            Icon(
-                              Icons.shopping_cart,
-                              color: Theme.of(context).textTheme.bodyText1!.color,
-                              size: 24.0,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  '${widget.image!.price.toString()} \$',
+                                  style: TextStyle(
+                                    fontFamily: 'Urbanist',
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color,
+                                    fontSize: 30.0,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      'Buy Now ',
+                                      style: TextStyle(
+                                        fontFamily: 'Urbanist',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
+                                        fontSize: 20.0,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.shopping_cart,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                      size: 24.0,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  )
-                      :
-                      Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: MediaQuery.of(context).size.height * 0.07,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFFEE7D4),
-                          Color.fromRGBO(98, 173, 55, 1)
-                        ],
-                        stops: [0.0, 1.0],
-                        begin: AlignmentDirectional(0.0, -1.0),
-                        end: AlignmentDirectional(0, 1.0),
-                      ),
-                      borderRadius: BorderRadius.circular(12.0),
-                      shape: BoxShape.rectangle,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Owned',
-                          style: TextStyle(
-                            fontFamily: 'Urbanist',
-                            color: Theme.of(context).textTheme.bodyText1!.color,
-                            fontSize: 30.0,
+                          ),
+                        )
+                      : Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: MediaQuery.of(context).size.height * 0.07,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xFFFEE7D4),
+                                Color.fromRGBO(98, 173, 55, 1)
+                              ],
+                              stops: [0.0, 1.0],
+                              begin: AlignmentDirectional(0.0, -1.0),
+                              end: AlignmentDirectional(0, 1.0),
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Owned',
+                                style: TextStyle(
+                                  fontFamily: 'Urbanist',
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
+                                  fontSize: 30.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        
-                      ],
-                    ),
-                  )
-                  ,
                 ],
               ),
             ),
@@ -402,6 +414,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
       ),
     );
   }
+
   Widget buildImageFromBase64(String base64String) {
     // Base64 kodunu çözme
     Uint8List bytes = base64.decode(base64String);
@@ -410,55 +423,63 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
     return Image.memory(
       bytes,
       fit: BoxFit.cover,
-      width: MediaQuery.sizeOf(context).width*1,
+      width: MediaQuery.sizeOf(context).width * 1,
       height: MediaQuery.sizeOf(context).height *
           1, // Resmi widget'ın boyutlarına sığdır
     );
   }
-  Future<void> purchase(String userId, int newAmount , String imageID) async {
-  final CollectionReference usersCollection = FirebaseFirestore.instance.collection('User');
-  final CollectionReference imageCollection = FirebaseFirestore.instance.collection('Image');
 
-  try {
-    await FirebaseFirestore.instance.runTransaction((Transaction transaction) async {
-      QuerySnapshot querySnapshot = await usersCollection.where('account_id', isEqualTo: userId).get();
+  Future<void> purchase(String userId, int newAmount, String imageID) async {
+    final CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('User');
+    final CollectionReference imageCollection =
+        FirebaseFirestore.instance.collection('Image');
 
-      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-        String documentId = documentSnapshot.id;
-        Map<String, dynamic> existingData = documentSnapshot.data() as Map<String, dynamic>;
-        int currentWalletAmount = existingData['wallet'] ?? 0;
+    try {
+      await FirebaseFirestore.instance
+          .runTransaction((Transaction transaction) async {
+        QuerySnapshot querySnapshot =
+            await usersCollection.where('account_id', isEqualTo: userId).get();
 
-        // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-        existingData['wallet'] = currentWalletAmount - newAmount;
+        for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+          String documentId = documentSnapshot.id;
+          Map<String, dynamic> existingData =
+              documentSnapshot.data() as Map<String, dynamic>;
+          int currentWalletAmount = existingData['wallet'] ?? 0;
 
-        // Belgeyi güncelle
-        transaction.update(usersCollection.doc(documentId), existingData);
+          // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+          existingData['wallet'] = currentWalletAmount - newAmount;
 
-        print('Veri eklendi/güncellendi: $documentId');
-      }
+          // Belgeyi güncelle
+          transaction.update(usersCollection.doc(documentId), existingData);
 
-      QuerySnapshot querySnapshotImage = await imageCollection.where('id', isEqualTo: imageID).get();
+          print('Veri eklendi/güncellendi: $documentId');
+        }
 
-      for (QueryDocumentSnapshot documentSnapshotImage in querySnapshotImage.docs) {
-        String imagedocumentId = documentSnapshotImage.id;
-        Map<String, dynamic> imageData = documentSnapshotImage.data() as Map<String, dynamic>;
-        
+        QuerySnapshot querySnapshotImage =
+            await imageCollection.where('id', isEqualTo: imageID).get();
 
-        // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-        imageData['owner'] =  userId;
+        for (QueryDocumentSnapshot documentSnapshotImage
+            in querySnapshotImage.docs) {
+          String imagedocumentId = documentSnapshotImage.id;
+          Map<String, dynamic> imageData =
+              documentSnapshotImage.data() as Map<String, dynamic>;
 
-        // Belgeyi güncelle
-        transaction.update(imageCollection.doc(imagedocumentId), imageData);
+          // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
+          imageData['owner'] = userId;
 
-        print('Veri eklendi/güncellendi: $imagedocumentId');
-      }
-    });
+          // Belgeyi güncelle
+          transaction.update(imageCollection.doc(imagedocumentId), imageData);
 
-    print('İşlem başarıyla tamamlandı');
-  } catch (error) {
-    print('Satın alma işlemi sırasında bir hata oluştu: $error');
-  }
-  showDialog(
+          print('Veri eklendi/güncellendi: $imagedocumentId');
+        }
+      });
+
+      print('İşlem başarıyla tamamlandı');
+    } catch (error) {
+      print('Satın alma işlemi sırasında bir hata oluştu: $error');
+    }
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Message'),
@@ -466,19 +487,21 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
         actions: [
           TextButton(
             onPressed: () {
-               Navigator.pop(context);
-               Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
               Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      HomePageMAINWidget()),
-            );},
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NavBarPage(
+                          initialPage: '',
+                          page: HomePageMAINWidget(),
+                        )),
+              );
+            },
             child: Text('Continue'),
           ),
         ],
       ),
     );
-}
-
+  }
 }
