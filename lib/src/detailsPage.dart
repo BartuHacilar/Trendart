@@ -445,10 +445,10 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
           String documentId = documentSnapshot.id;
           Map<String, dynamic> existingData =
               documentSnapshot.data() as Map<String, dynamic>;
-          int currentWalletAmount = existingData['wallet'] ?? 0;
+          
 
           // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-          existingData['wallet'] = currentWalletAmount - newAmount;
+          existingData['wallet'] = newAmount;
 
           // Belgeyi güncelle
           transaction.update(usersCollection.doc(documentId), existingData);
