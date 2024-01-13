@@ -429,7 +429,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
         int currentWalletAmount = existingData['wallet'] ?? 0;
 
         // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-        existingData['wallet'] = currentWalletAmount + newAmount;
+        existingData['wallet'] = currentWalletAmount - newAmount;
 
         // Belgeyi güncelle
         transaction.update(usersCollection.doc(documentId), existingData);
@@ -445,7 +445,7 @@ class _PropertyDetailsWidgetState extends State<PropertyDetailsWidget>
         
 
         // Yeni veriyi ekleyin veya mevcut veriyi güncelleyin
-        imageData['owner'] =  imageID;
+        imageData['owner'] =  userId;
 
         // Belgeyi güncelle
         transaction.update(imageCollection.doc(imagedocumentId), imageData);

@@ -77,7 +77,7 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
         }
 
         setState(() {
-          if (newImage.owner == '' && newImage.owner == user.account_id) {
+          if (newImage.owner == '' || newImage.owner == user.account_id) {
             imageList.add(newImage);
           }
         });

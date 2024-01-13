@@ -74,7 +74,7 @@ class _FavouriteWidgetState extends State<FavouriteWidget> {
           newImage.favourite = true;
 
           setState(() {
-            if (newImage.owner == '' && newImage.owner == user.account_id) {
+            if (newImage.owner == '' || newImage.owner == user.account_id) {
               imageList.add(newImage);
             }
           });
