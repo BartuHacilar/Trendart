@@ -28,8 +28,9 @@ class _HomePageMAINWidgetState extends State<HomePageMAINWidget> {
   @override
   void initState() {
     super.initState();
+    loading = true;
     getGorevliIDFromStorage(context).then((value) {
-      loading = true;
+      
       print('1');
       print(value);
       if (value != '') {
